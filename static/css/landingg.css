@@ -1151,41 +1151,120 @@
 
         /* ========== BRANDS ========== */
         .brands {
-            margin-top: 40px;
-            text-align: center;
-            padding: 0 20px;
-        }
-        .brands h2 {
-            margin-bottom: 25px;
-            color: #0f2d74;
-        }
-        .brand-slider {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            gap: 15px;
-            flex-wrap: wrap;
-            overflow-x: auto;
-        }
-        .brand-slider img {
-            height: 40px;
-            opacity: .8;
-            flex-shrink: 0;
-        }
-        @media (max-width: 768px) {
-            .brand-slider {
-                gap: 20px;
-                justify-content: center;
-            }
-            .brand-slider img {
-                height: 32px;
-            }
-        }
+    margin-top: 40px;
+    text-align: center;
+    padding: 0 20px;
+}
 
-        /* ========== STATS ========== */
+.brands h2 {
+    margin-bottom: 25px;
+    color: #0f2d74;
+}
+
+.brand-slider-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.brand-slider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: #fff;
+    padding: 20px 65px;
+    border-radius: 15px;
+    gap: 30px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex-wrap: nowrap;
+}
+
+.brand-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.brand-slider img {
+    height: 40px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    opacity: .8;
+    flex: 0 0 auto;
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.brand-slider img:hover {
+    opacity: 1;
+    transform: scale(1.04);
+}
+
+.brand-slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border: 1px solid #e1e7f0;
+    border-radius: 50%;
+    background: #fff;
+    color: #1565f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 6px 18px rgba(15, 45, 116, .10);
+    transition: all .25s ease;
+}
+
+.brand-slider-btn:hover {
+    background: #1565f7;
+    color: #fff;
+    border-color: #1565f7;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.brand-prev {
+    right: 10px;
+}
+
+.brand-next {
+    left: 10px;
+}
+
+@media (max-width: 768px) {
+    .brand-slider {
+        gap: 20px;
+        padding: 16px 50px;
+        justify-content: flex-start;
+    }
+
+    .brand-slider img {
+        height: 32px;
+    }
+
+    .brand-slider-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+    }
+
+    .brand-prev {
+        right: 6px;
+    }
+
+    .brand-next {
+        left: 6px;
+    }
+}
+
+/* ========== STATS ========== */
         .stats {
             margin-top: 30px;
             background: linear-gradient(90deg, #0050d4, #022a8c);

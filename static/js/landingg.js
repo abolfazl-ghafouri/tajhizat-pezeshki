@@ -56,6 +56,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    const brandSlider = document.getElementById('brandSlider');
+    const brandPrev = document.getElementById('brandPrev');
+    const brandNext = document.getElementById('brandNext');
+
+    if (brandSlider && brandPrev && brandNext) {
+        brandPrev.addEventListener('click', () => {
+            brandSlider.scrollBy({
+                left: 250,
+                behavior: 'smooth'
+            });
+        });
+
+        brandNext.addEventListener('click', () => {
+            brandSlider.scrollBy({
+                left: -250,
+                behavior: 'smooth'
+            });
+        });
+    }
+
     const specialSlider = document.getElementById('specialSlider');
     const specialPrev = document.getElementById('specialPrev');
     const specialNext = document.getElementById('specialNext');

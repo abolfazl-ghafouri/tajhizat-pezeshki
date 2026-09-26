@@ -129,8 +129,19 @@ def get_user_cart(user):
     return cart
 
 
+def to_persian_digits(value):
+    translation = str.maketrans(
+        '0123456789',
+        '۰۱۲۳۴۵۶۷۸۹'
+    )
+    return str(value).translate(translation)
+
+
 def format_price(price):
-    return f'{price:,} تومان'
+    formatted = f'{price:,}'
+    formatted = formatted.replace(',', '٬')
+
+    return f'{to_persian_digits(formatted)} تومان'
 
 
 def get_cart_summary(cart, coupon=None):

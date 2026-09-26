@@ -84,11 +84,88 @@
 {% endfor %}
 </div>
 <div class="section-title"><h2>دسته‌بندی محصولات</h2></div>
+
 <div class="cards">
 
+    {% for category in categories %}
+        {% if category.slug == 'medical' %}
+            <div class="card card-green">
+                <div class="card-content">
+                    <h3>{{ category.name }}</h3>
+                    <ul>
+                        {% for item in category.items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn" href="{{ category.url }}">
+                        مشاهده همه
+                    </a>
+                </div>
 
+                <div class="card-image">
+                    <img
+                        alt="{{ category.image_alt|default:category.name }}"
+                        loading="lazy"
+                        src="{{ category.image_url }}"
+                    />
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 
-{% for category in categories %}<div class="card {{ category.card_class }}"><div class="card-content"><h3>{{ category.name }}</h3><ul>{% for item in category.items %}<li>{{ item }}</li>{% endfor %}</ul><a class="btn" href="{{ category.url }}">مشاهده همه</a></div><div class="card-image"><img alt="{{ category.image_alt|default:category.name }}" loading="lazy" src="{{ category.image_url }}"/></div></div>{% endfor %}</div>
+    {% for category in categories %}
+        {% if category.slug == 'dental' %}
+            <div class="card card-blue">
+                <div class="card-content">
+                    <h3>{{ category.name }}</h3>
+                    <ul>
+                        {% for item in category.items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn" href="{{ category.url }}">
+                        مشاهده همه
+                    </a>
+                </div>
+
+                <div class="card-image">
+                    <img
+                        alt="{{ category.image_alt|default:category.name }}"
+                        loading="lazy"
+                        src="{{ category.image_url }}"
+                    />
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% for category in categories %}
+        {% if category.slug == 'laboratory' %}
+            <div class="card card-purple">
+                <div class="card-content">
+                    <h3>{{ category.name }}</h3>
+                    <ul>
+                        {% for item in category.items %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn" href="{{ category.url }}">
+                        مشاهده همه
+                    </a>
+                </div>
+
+                <div class="card-image">
+                    <img
+                        alt="{{ category.image_alt|default:category.name }}"
+                        loading="lazy"
+                        src="{{ category.image_url }}"
+                    />
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+</div>
 </div>
 <section class="special-products inline-style-1">
 <div class="section-title"><h2>محصولات ویژه</h2></div>
@@ -135,10 +212,37 @@
 </section>
 <section class="brands">
 <h2>برندهای معتبر</h2>
-<div class="brand-slider">
-<i class="fa-solid fa-chevron-right"></i>
-<i class="fa-solid fa-chevron-left"></i>
-{% for brand in brands %}<img alt="{{ brand.name }}" loading="lazy" src="{{ brand.image_url }}"/>{% endfor %}</div>
+<div class="brand-slider-wrapper">
+    <button
+        type="button"
+        class="brand-slider-btn brand-prev"
+        id="brandPrev"
+        aria-label="برند قبلی"
+    >
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div class="brand-slider" id="brandSlider">
+        {% for brand in brands %}
+            <img
+                alt="{{ brand.name }}"
+                loading="lazy"
+                src="{{ brand.image_url }}"
+            />
+        {% empty %}
+            <span>برندی ثبت نشده است.</span>
+        {% endfor %}
+    </div>
+
+    <button
+        type="button"
+        class="brand-slider-btn brand-next"
+        id="brandNext"
+        aria-label="برند بعدی"
+    >
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+</div>
 </section>
 <section class="stats">
 
