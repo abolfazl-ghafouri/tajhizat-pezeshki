@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa-IR">
+<head>
+{% load static %}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>وبلاگ تجهیزات پزشکی مدیکا — مقالات تخصصی پزشکی</title>
+<!-- Font Awesome 6 for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="{% static 'css/weblog.css' %}" rel="stylesheet"/>
+</head>
+<body>
+<div class="topbar">
+<div class="container">
+<div class="topbar-right">
+<a href="tel:{{ site_settings.phone|default:'09372105008' }}"><i class="fa-solid fa-phone"></i>{{ site_settings.phone_display|default:"09372105008" }}</a>
+<a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}"><i class="fa-solid fa-envelope"></i> {{ site_settings.email|default:'info@azaryazdan.ir' }}</a>
+</div>
+<div class="topbar-left">
+<i class="fa-solid fa-user"></i>
+{% if request.user.is_authenticated %}
+<a class="auth-btn" href="{% url 'dashboard' %}">داشبورد</a>
+<a class="auth-btn register" href="{% url 'logout' %}">خروج</a>
+{% else %}
+<a class="auth-btn" href="{% url 'login' %}">ورود</a>
+<a class="auth-btn register" href="{% url 'login' %}#register">ثبت نام</a>
+{% endif %}
+</div>
+</div>
+</div>
+<header class="header" id="header">
+<div class="container">
+<div class="logo">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<div class="header-icons">
+<i class="fa-solid fa-magnifying-glass" data-navigation-url="{% url 'shop' %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-heart" data-navigation-url="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-cart-shopping" data-navigation-url="{% url 'cart' %}" role="link" tabindex="0"></i>
+</div>
+<div class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</div>
+<!-- overlay برای بستن منو با کلیک بیرون -->
+<div class="nav-overlay" id="navOverlay"></div>
+<nav id="navMenu">
+<ul>
+<li><a href="{% url 'home' %}">خانه</a></li>
+<li><a href="{% url 'shop' %}">محصولات</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+<li><a href="{% url 'shop' %}">دندانپزشکی</a></li>
+<li><a href="{% url 'shop' %}">برندها</a></li>
+<li><a href="{% url 'blog' %}">وبلاگ</a></li>
+<li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس</a></li>
+</ul>
+</nav>
+</div>
+</header>
+<!-- BLOG HERO -->
+<section class="blog-hero">
+<div class="blog-hero-content">
+<span class="blog-hero-badge"><i class="fas fa-newspaper meta-icon"></i> مقالات تخصصی</span>
+<h1>وبلاگ <span>تجهیزات پزشکی</span> آذریزدان</h1>
+<p>جدیدترین مقالات، راهنماهای تخصصی و اخبار حوزه تجهیزات پزشکی را در وبلاگ آذریزدان مطالعه کنید.</p>
+<form class="hero-search" action="{% url 'blog' %}" method="get"><input name="q" value="{{ query }}" placeholder="جستجو در مقالات..." type="text"/><button type="submit"><i class="fas fa-search meta-icon"></i> جستجو</button></form>
+</div>
+</section>
+<!-- MAIN CONTENT -->
+<main class="main-layout">
+<!-- POSTS SECTION -->
+<section class="posts-section">
+<!-- Featured Post -->
+{% if featured_articles %}{% with featured_post=featured_articles.0 %}<article class="post-card featured"><div class="post-image"><span class="post-category-badge">ویژه</span><img alt="{{ featured_post.image_alt|default:featured_post.title }}" loading="lazy" src="{{ featured_post.image_url }}"/></div><div class="post-body"><div class="post-meta"><span><i class="fas fa-calendar-alt meta-icon"></i> {{ featured_post.published_at_display }}</span><span><i class="fas fa-clock meta-icon"></i> {{ featured_post.read_time }} دقیقه مطالعه</span><span><i class="fas fa-eye meta-icon"></i> {{ featured_post.views_display }} بازدید</span></div><h3><a href="{{ featured_post.detail_url }}">{{ featured_post.title }}</a></h3><p>{{ featured_post.excerpt }}</p><a class="read-more-link" href="{{ featured_post.detail_url }}">ادامه مطلب <svg fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a></div></article>{% endwith %}{% endif %}
+<!-- Section Header -->
+<div class="section-header">
+<h2><i class="fas fa-clipboard-list meta-icon"></i> جدیدترین مقالات</h2>
+<a class="view-all" href="{% url 'blog' %}">مشاهده همه مقالات </a>
+</div>
+<!-- Posts Grid -->
+<div class="posts-grid">{% for post in posts %}<article class="post-card standard"><div class="post-image">{% if post.is_featured %}<span class="post-category-badge">ویژه</span>{% endif %}<img alt="{{ post.image_alt|default:post.title }}" loading="lazy" src="{{ post.image_url }}"/></div><div class="post-body"><div class="post-meta"><span><i class="fas fa-calendar-alt meta-icon"></i> {{ post.published_at_display }}</span><span><i class="fas fa-clock meta-icon"></i> {{ post.read_time }} دقیقه مطالعه</span><span><i class="fas fa-eye meta-icon"></i> {{ post.views_display }} بازدید</span></div><h3><a href="{{ post.detail_url }}">{{ post.title }}</a></h3><p>{{ post.excerpt }}</p><a class="read-more-link" href="{{ post.detail_url }}">ادامه مطلب <svg fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a></div></article>{% empty %}<div class="empty-state">مقاله‌ای برای نمایش وجود ندارد.</div>{% endfor %}</div>
+<!-- Pagination -->
+<nav aria-label="صفحه‌بندی" class="pagination">{% if pagination.has_previous %}<a class="arrow" href="{% querystring page=pagination.previous_page_number %}">«</a>{% endif %}{% for num in pagination.paginator.page_range %}{% if num == pagination.number %}<span class="active">{{ num }}</span>{% else %}<a href="{% querystring page=num %}">{{ num }}</a>{% endif %}{% endfor %}{% if pagination.has_next %}<a class="arrow" href="{% querystring page=pagination.next_page_number %}">»</a>{% endif %}</nav>
+</section>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<!-- Categories -->
+<div class="sidebar-widget">
+<h4><i class="fas fa-folder-open"></i> دسته‌بندی مقالات</h4>
+<ul class="category-list">{% for category in categories %}<li><a href="{% querystring category=category.slug %}">{{ category.name }} <span class="count">{{ category.count }}</span></a></li>{% endfor %}</ul>
+</div>
+<!-- Recent Posts -->
+<div class="sidebar-widget">
+<h4><i class="fas fa-history"></i> آخرین مقالات</h4>
+{% for post in posts|slice:":4" %}
+<div class="recent-post-item">
+<div class="recent-post-thumb">
+<img alt="{{ post.image_alt|default:post.title }}" loading="lazy" src="{{ post.image_url }}">
+</div>
+<div class="recent-post-info">
+<h5><a href="{{ post.detail_url }}">{{ post.title }}</a></h5>
+<span class="date">{{ post.published_at_display }}</span>
+</div>
+</div>
+{% empty %}<div class="empty-state">مقاله‌ای ثبت نشده است.</div>{% endfor %}
+</div>
+<!-- Tags -->
+<div class="sidebar-widget">
+<h4><i class="fas fa-tags"></i> برچسب‌های پرطرفدار</h4>
+<div class="tag-cloud">{% for tag in tags %}<a href="{% querystring tag=tag.slug %}">{{ tag.name }}</a>{% empty %}<span>تگی ثبت نشده است.</span>{% endfor %}</div>
+</div>
+<div class="newsletter-widget">
+<h4><i class="fas fa-envelope-open-text"></i> خبرنامه تخصصی</h4>
+<p>جدیدترین مقالات و اخبار تجهیزات پزشکی را مستقیماً در ایمیل خود دریافت کنید.</p>
+<form action="{% url 'newsletter_subscribe' %}" method="post" data-ajax-form="newsletter">
+{% csrf_token %}
+<input name="email" placeholder="ایمیل خود را وارد کنید..." type="email" required/>
+<button type="submit">عضویت رایگان</button>
+</form>
+</div>
+</aside>
+</main>
+<footer class="footer">
+<div class="footer-container">
+<div class="footer-col contact-col">
+<h3>اطلاعات تماس</h3>
+<ul class="contact-list">
+<li><span>{{ site_settings.phone_display|default:"09372105008" }}</span><i class="fa-solid fa-phone"></i></li>
+<li><span>09372108005</span><i class="fa-solid fa-mobile-screen"></i></li>
+<li><span>{{ site_settings.email|default:"azaryazdan@gmail.com" }}</span><i class="fa-regular fa-envelope"></i></li>
+<li><span>تبریز 17 شهریور جدید <br/>جنب بانک ملت کوی نوبری جنب فروشگاه پالتار شرکت آدریزدان پلاک18</span><i class="fa-solid fa-location-dot"></i></li>
+</ul>
+</div>
+<div class="footer-col">
+<h3>خدمات</h3>
+<ul>
+<li><a href="#">مشاوره تخصصی</a></li>
+<li><a href="#">خدمات پس از فروش</a></li>
+<li><a href="#">آموزش و نصب</a></li>
+<li><a href="#">گارانتی و ضمانت</a></li>
+<li><a href="#">پشتیبانی آنلاین</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h3>دسترسی سریع</h3>
+<ul>
+<li><a href="{% url 'home' %}">صفحه اصلی</a></li>
+<li><a href="{% url 'about' %}">درباره ما</a></li>
+<li><a href="{% url 'shop' %}">برندها</a></li>
+<li><a href="{% url 'blog' %}">مقالات</a></li>
+<li><a href="{% url 'faq_list' %}">سوالات متداول</a></li>
+<li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس با ما</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h3>محصولات</h3>
+<ul>
+<li><a href="{% url 'shop' %}">تجهیزات دندانپزشکی</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات آزمایشگاهی</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات تصویربرداری</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات استریل</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات مصرفی</a></li>
+</ul>
+</div>
+<div class="footer-col company-col">
+<div class="logo">
+<div class="logo-icon"><i class="fa-solid fa-heart-circle-plus"></i></div>
+<div><h2>{{ site_settings.brand_name|default:"AZARYAZDAN" }}</h2><span>تجهیزات پزشکی و دندانپزشکی</span></div>
+</div>
+<p class="about-text">ارائه دهنده تجهیزات پزشکی و دندانپزشکی از برندهای معتبر جهانی با بهترین قیمت و خدمات پس از فروش</p>
+<div class="socials">
+<a href="#"><i class="fa-brands fa-instagram"></i></a>
+<a href="#"><i class="fa-brands fa-telegram"></i></a>
+<a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+<a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="footer-links"><a href="#">شرایط و قوانین</a><a href="#">سیاست حفظ حریم خصوصی</a></div>
+<div class="copyright">© 1405 تمامی حقوق این وبسایت متعلق به شرکت مدی‌دنت می‌باشد.</div>
+</div>
+<a class="scroll-top" href="#" id="scrollTopBtn"><i class="fa-solid fa-arrow-up"></i></a>
+</footer>
+<script src="{% static 'js/weblog.js' %}"></script>
+</body>
+</html>

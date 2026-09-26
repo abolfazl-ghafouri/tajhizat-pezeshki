@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} | وبلاگ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/takweblog.css' %}">
+</head>
+<body>
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="container">
+            <div class="topbar-right">
+                <a href="tel:{{ site_settings.phone_display|default:'09372105008' }}">
+                    <i class="fa-solid fa-phone"></i> {{ site_settings.phone_display|default:'09372105008' }}
+                </a>
+                <a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">
+                    <i class="fa-solid fa-envelope"></i> {{ site_settings.email|default:'info@azaryazdan.ir' }}
+                </a>
+            </div>
+            <div class="topbar-left">
+                <i class="fa-solid fa-user"></i>
+                {% if request.user.is_authenticated %}
+                    <a class="auth-btn" href="{% url 'dashboard' %}">داشبورد</a>
+                    <a class="auth-btn register" href="{% url 'logout' %}">خروج</a>
+                {% else %}
+                    <a class="auth-btn" href="{% url 'login' %}">ورود</a>
+                    <a class="auth-btn register" href="{% url 'login' %}#register">ثبت نام</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">{{ site_settings.brand_name|default:'AZARYAZDAN' }}</div>
+            <button class="hamburger" id="hamburger" aria-label="منوی همبرگری">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="navMenu">
+                <ul>
+                    <li><a href="{% url 'home' %}">خانه</a></li>
+                    <li><a href="{% url 'shop' %}">محصولات</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+                    <li><a href="{% url 'shop' %}">دندانپزشکی</a></li>
+                    <li><a href="{% url 'shop' %}">برندها</a></li>
+                    <li><a href="{% url 'blog' %}">وبلاگ</a></li>
+                    <li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس</a></li>
+                </ul>
+            </nav>
+            <div class="header-icons">
+                <i class="fa-solid fa-magnifying-glass" data-navigation-url="{% url 'shop' %}" role="link" tabindex="0"></i>
+                <i class="fa-solid fa-heart" data-navigation-url="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" role="link" tabindex="0"></i>
+                <i class="fa-solid fa-cart-shopping" data-navigation-url="{% url 'cart' %}" role="link" tabindex="0"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="dot"></span> مرکز مقالات تخصصی
+            </div>
+            <h1>وبلاگ <span class="highlight">تجهیزات پزشکی</span></h1>
+            <div class="breadcrumb">
+                <span class="current">{{ article.title }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="content-area">
+        <div class="container layout">
+
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+
+                <div class="card search-box">
+                    <h3>جستجو در مقالات</h3>
+                    <form class="search-wrapper" action="{% url 'blog' %}" method="get">
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ query|default:'' }}"
+                            placeholder="عنوان یا کلمه کلیدی..."
+                        >
+                        <button class="search-icon" type="submit" aria-label="جستجو">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>دسته‌بندی‌ها</h3>
+                    <ul class="categories">
+                        {% for category in categories %}
+    <li>
+        <a
+            href="{% url 'blog' %}?category={{ category.slug }}"
+            class="category-link"
+        >
+            <span class="cat-name">
+                <span class="cat-icon {{ category.icon_class }}">
+                    <i class="{{ category.icon }}"></i>
+                </span>
+
+                {{ category.name }}
+            </span>
+
+            <span class="count">
+                {{ category.count }}
+            </span>
+        </a>
+    </li>
+{% empty %}
+    <li>
+        <span class="cat-name">
+            دسته‌بندی‌ای وجود ندارد
+        </span>
+    </li>
+{% endfor %}
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>محبوب‌ترین مقالات</h3>
+                    {% for post in related_articles %}
+                        <div class="post-item">
+                            <div class="img-wrap">
+                                <img
+                                    src="{{ post.image_url }}"
+                                    alt="{{ post.image_alt|default:post.title }}"
+                                    loading="lazy"
+                                >
+                            </div>
+                            <div>
+                                <h4>
+                                    <a href="{{ post.detail_url }}">{{ post.title }}</a>
+                                </h4>
+                                <span>
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    {{ post.published_at_display }}
+                                </span>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="empty-state">مقاله مرتبطی وجود ندارد.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="consult-box">
+                    <h3><i class="fa-solid fa-comments"></i> نیاز به مشاوره دارید؟</h3>
+                    <p>کارشناسان ما آماده پاسخگویی به سوالات شما هستند.</p>
+                    <a href="tel:{{ site_settings.phone|default:'09372105008' }}" class="btn">درخواست مشاوره رایگان</a>
+                </div>
+
+            </aside>
+
+            <!-- MAIN -->
+            <main class="main-content">
+                <article class="article-card">
+                    <div class="cover-wrap">
+                        <img
+                            class="cover"
+                            src="{{ article.cover_url }}"
+                            alt="{{ article.cover_alt|default:article.title }}"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="meta">
+                        <span>
+                            <i class="fa-regular fa-calendar-days"></i>
+                            {{ article.published_at_display }}
+                        </span>
+                        <span>
+                            <i class="fa-regular fa-clock"></i>
+                            {{ article.read_time }} دقیقه مطالعه
+                        </span>
+                        <span>
+                            <i class="fa-solid fa-tooth"></i>
+                            {{ article.category_name }}
+                        </span>
+                    </div>
+
+                    <h2>{{ article.title }}</h2>
+
+                    {% if article.excerpt %}
+                        <p>{{ article.excerpt }}</p>
+                    {% endif %}
+
+                    <div class="article-content">
+                        {{ article.content_html|safe }}
+                    </div>
+
+                    <div class="note-box">
+                        <span class="note-icon">
+                            <i class="fa-regular fa-lightbulb"></i>
+                        </span>
+                        <div>
+                            <strong>نکته مهم:</strong>
+                            قبل از خرید، خدمات پس از فروش و تأمین قطعات یدکی را به‌دقت بررسی کنید.
+                        </div>
+                    </div>
+
+                    <div class="tags">
+                        {% for tag in article.tags %}
+                            <span>{{ tag.name }}</span>
+                        {% empty %}
+                            <span>تجهیزات پزشکی</span>
+                        {% endfor %}
+                    </div>
+                </article>
+            </main>
+
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container newsletter-inner">
+            <div>
+                <h2><i class="fa-solid fa-envelope-open-text"></i> از جدیدترین مقالات و اخبار مطلع شوید</h2>
+                <p>با عضویت در خبرنامه، جدیدترین مطالب را در ایمیل خود دریافت کنید.</p>
+            </div>
+            <form action="{% url 'newsletter_subscribe' %}" data-ajax-form="newsletter" method="post">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="ایمیل خود را وارد کنید" required>
+                <button type="submit">عضویت رایگان</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col contact-col">
+                <h3>اطلاعات تماس</h3>
+                <ul class="contact-list">
+                    <li><span>{{ site_settings.phone_display|default:'09372105008' }}</span><i class="fa-solid fa-phone"></i></li>
+                    <li><span>09372108005</span><i class="fa-solid fa-mobile-screen"></i></li>
+                    <li><span>{{ site_settings.email|default:'azaryazdan@gmail.com' }}</span><i class="fa-regular fa-envelope"></i></li>
+                    <li><span>تبریز 17 شهریور جدید <br>جنب بانک ملت کوی نوبری جنب فروشگاه پالتار شرکت آدریزدان پلاک18</span><i class="fa-solid fa-location-dot"></i></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>خدمات</h3>
+                <ul>
+                    <li><a href="#">مشاوره تخصصی</a></li>
+                    <li><a href="#">خدمات پس از فروش</a></li>
+                    <li><a href="#">آموزش و نصب</a></li>
+                    <li><a href="#">گارانتی و ضمانت</a></li>
+                    <li><a href="#">پشتیبانی آنلاین</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>دسترسی سریع</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">صفحه اصلی</a></li>
+                    <li><a href="{% url 'about' %}">درباره ما</a></li>
+                    <li><a href="{% url 'shop' %}">برندها</a></li>
+                    <li><a href="{% url 'blog' %}">مقالات</a></li>
+                    <li><a href="{% url 'faq_list' %}">سوالات متداول</a></li>
+                    <li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس با ما</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>محصولات</h3>
+                <ul>
+                    <li><a href="{% url 'shop' %}">تجهیزات دندانپزشکی</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات آزمایشگاهی</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات تصویربرداری</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات استریل</a></li>
+                    <li><a href="{% url 'shop' %}">تجهیزات مصرفی</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col company-col">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-heart-circle-plus"></i></div>
+                    <div>
+                        <h2>{{ site_settings.brand_name|default:'AZARYAZDAN' }}</h2>
+                        <span>تجهیزات پزشکی و دندانپزشکی</span>
+                    </div>
+                </div>
+                <p class="about-text">ارائه دهنده تجهیزات پزشکی و دندانپزشکی از برندهای معتبر جهانی با بهترین قیمت و خدمات پس از فروش</p>
+                <div class="socials">
+                    <a aria-label="اینستاگرام" href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a aria-label="تلگرام" href="#"><i class="fa-brands fa-telegram"></i></a>
+                    <a aria-label="لینکدین" href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a aria-label="واتساپ" href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-links">
+                <a href="#">شرایط و قوانین</a>
+                <a href="#">سیاست حفظ حریم خصوصی</a>
+            </div>
+            <div class="copyright">© 1405 تمامی حقوق این وبسایت متعلق به شرکت مدی‌دنت می‌باشد.</div>
+        </div>
+
+        <button aria-label="اسکرول به بالا" class="scroll-top" id="scrollTopBtn">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+    </footer>
+
+    <script src="{% static 'js/takweblog.js' %}"></script>
+</body>
+</html>

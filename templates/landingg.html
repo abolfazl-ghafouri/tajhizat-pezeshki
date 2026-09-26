@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+<head>
+{% load static %}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<title>{{ site_settings.brand_name|default:"AZARYAZDAN" }} | تجهیزات پزشکی و دندانپزشکی</title>
+<link href="{% static 'css/landingg.css' %}" rel="stylesheet"/>
+</head>
+<body data-is-authenticated="{{ request.user.is_authenticated|yesno:'1,0' }}" data-login-url="{% url 'login' %}">
+<form id="ajaxActionForm" hidden>{% csrf_token %}</form>
+<div class="topbar">
+<div class="container">
+<div class="topbar-right">
+<a href="tel:{{ site_settings.phone|default:'09372105008' }}"><i class="fa-solid fa-phone"></i> {{ site_settings.phone_display|default:"09372105008" }}</a>
+<a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}"><i class="fa-solid fa-envelope"></i> {{ site_settings.email|default:'info@azaryazdan.ir' }}</a>
+</div>
+<div class="topbar-left">
+<i class="fa-solid fa-user"></i>
+{% if request.user.is_authenticated %}
+<a class="auth-btn" href="{% url 'dashboard' %}">داشبورد</a>
+<a class="auth-btn register" href="{% url 'logout' %}">خروج</a>
+{% else %}
+<a class="auth-btn" href="{% url 'login' %}">ورود</a>
+<a class="auth-btn register" href="{% url 'login' %}#register">ثبت نام</a>
+{% endif %}
+</div>
+</div>
+</div>
+<header class="header">
+<div class="container">
+<div class="logo">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<div class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</div>
+<nav id="navMenu">
+<ul>
+<li><a href="{% url 'home' %}">خانه</a></li>
+<li><a href="{% url 'shop' %}">محصولات</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+<li><a href="{% url 'shop' %}">دندانپزشکی</a></li>
+<li><a href="{% url 'shop' %}">برندها</a></li>
+<li><a href="{% url 'blog' %}">وبلاگ</a></li>
+<li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس</a></li>
+</ul>
+</nav>
+<div class="header-icons">
+<i class="fa-solid fa-magnifying-glass" data-navigation-url="{% url 'shop' %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-heart" data-navigation-url="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-cart-shopping" data-navigation-url="{% url 'cart' %}" role="link" tabindex="0"></i>
+</div>
+</div>
+</header>
+<section class="hero">
+<div class="container">
+<div class="hero-content">
+<div class="hero-text">
+<span>کلینیک نوآوری و اعتماد</span>
+<h1>پیشرفته‌ترین تجهیزات<br/>پزشکی و دندانپزشکی جهان</h1>
+<p>ارائه مدرن‌ترین تجهیزات پزشکی و دندانپزشکی از معتبرترین برندهای دنیا</p>
+<div class="hero-btns">
+<a class="btn-primary" href="{% url 'shop' %}">مشاهده محصولات</a>
+<a class="btn-secondary" href="tel:{{ site_settings.phone|default:'09372105008' }}">دریافت مشاوره</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="container">
+<div class="features">
+{% for feature in service_features|slice:":4" %}
+<div class="feature-box">
+<div class="icon"><i class="{{ feature.icon }}"></i></div>
+<div>
+<h4>{{ feature.title }}</h4>
+<p>{{ feature.description }}</p>
+</div>
+</div>
+{% endfor %}
+</div>
+<div class="section-title"><h2>دسته‌بندی محصولات</h2></div>
+<div class="cards">
+
+
+
+{% for category in categories %}<div class="card {{ category.card_class }}"><div class="card-content"><h3>{{ category.name }}</h3><ul>{% for item in category.items %}<li>{{ item }}</li>{% endfor %}</ul><a class="btn" href="{{ category.url }}">مشاهده همه</a></div><div class="card-image"><img alt="{{ category.image_alt|default:category.name }}" loading="lazy" src="{{ category.image_url }}"/></div></div>{% endfor %}</div>
+</div>
+<section class="special-products inline-style-1">
+<div class="section-title"><h2>محصولات ویژه</h2></div>
+<div class="product-slider container">
+<button class="arrow prev" id="specialPrev"><i class="fa-solid fa-chevron-right"></i></button>
+<div class="slider-track" id="specialSlider">
+
+
+
+
+
+{% for product in featured_products %}
+<div class="product-card">
+<div class="img-wrapper">
+<img alt="{{ product.image_alt|default:product.title }}" loading="lazy" src="{{ product.image_url }}"/>
+<div class="img-overlay">
+<button class="icon-btn" data-product-action="quick-view" data-product-id="{{ product.id }}" data-product-detail-url="{{ product.detail_url }}" title="مشاهده سریع" type="button"><i class="fas fa-eye"></i></button>
+<button class="icon-btn{% if product.is_favorite %} active{% endif %}" data-product-action="favorite" data-product-id="{{ product.id }}" data-favorite-url="{% url 'toggle_favorite' product.id %}" title="افزودن به علاقه‌مندی" type="button"><i class="{% if product.is_favorite %}fas{% else %}far{% endif %} fa-heart"></i></button>
+<button class="icon-btn" data-product-action="cart" data-product-id="{{ product.id }}" data-cart-url="{% url 'add_to_cart' product.id %}" title="افزودن به سبد خرید" type="button"><i class="fas fa-shopping-cart"></i></button>
+</div>
+</div>
+<h3>{{ product.title }}</h3>
+<span>{{ product.brand_name }}</span>
+<a href="{{ product.detail_url }}">جزئیات بیشتر +</a>
+</div>
+{% empty %}
+<!-- No featured products. -->
+{% endfor %}</div>
+<button class="arrow next" id="specialNext"><i class="fa-solid fa-chevron-left"></i></button>
+</div>
+</section>
+<section class="why-us">
+<div class="why-us-container">
+<div class="why-us-image"><img alt="پزشک" src="{% static 'images/doktor.jpeg' %}"/></div>
+<div class="why-us-content">
+<h2>چرا مجموعه ما؟</h2>
+<div class="features">
+{% for feature in service_features %}
+<div class="feature"><div class="icon"><i class="{{ feature.icon }}"></i></div><h3>{{ feature.title }}</h3><p>{{ feature.description }}</p></div>
+{% endfor %}
+</div>
+</div>
+</div>
+</section>
+<section class="brands">
+<h2>برندهای معتبر</h2>
+<div class="brand-slider">
+<i class="fa-solid fa-chevron-right"></i>
+<i class="fa-solid fa-chevron-left"></i>
+{% for brand in brands %}<img alt="{{ brand.name }}" loading="lazy" src="{{ brand.image_url }}"/>{% endfor %}</div>
+</section>
+<section class="stats">
+
+
+
+
+{% for stat in company_stats %}<div class="stat"><i class="{{ stat.icon }}"></i><h3>{{ stat.value }}</h3><span>{{ stat.label }}</span></div>{% endfor %}</section>
+<section class="articles-section">
+<div class="section-title"><h2>آخرین مقالات</h2></div>
+<div class="articles-grid">
+
+
+
+{% for article in latest_articles %}
+<div class="article-card">
+<img alt="{{ article.image_alt|default:article.title }}" loading="lazy" src="{{ article.image_url }}"/>
+<div class="article-content">
+<h3>{{ article.title }}</h3>
+<p>{{ article.excerpt }}</p>
+<a href="{{ article.detail_url }}">مطالعه بیشتر <i class="fa-solid fa-arrow-left"></i></a>
+</div>
+</div>
+{% empty %}
+<div class="empty-state">مقاله‌ای منتشر نشده است.</div>
+{% endfor %}</div>
+<div class="consult-box">
+<div class="consult-content">
+<h3>برای انتخاب بهترین تجهیزات پزشکی و دندانپزشکی</h3>
+<p>با کارشناسان ما در ارتباط باشید و مشاوره رایگان دریافت کنید</p>
+</div>
+<a class="consult-btn" href="tel:{{ site_settings.phone|default:'09372105008' }}"><i class="fa-solid fa-headset"></i> درخواست مشاوره رایگان</a>
+</div>
+</section>
+<section class="latest-products" dir="rtl">
+<div class="section-title">
+<h2>جدیدترین محصولات</h2>
+<div class="underline"></div>
+<p>جدیدترین تجهیزات پزشکی و دندانپزشکی با تکنولوژی روز دنیا از بهترین برندهای معتبر</p>
+</div>
+<div class="slider-wrapper">
+<button aria-label="بعدی" class="slider-btn left-btn" id="nextBtn">❯</button>
+<button aria-label="قبلی" class="slider-btn right-btn" id="prevBtn">❮</button>
+<div class="products-slider" id="slider">
+
+
+
+
+
+{% for product in latest_products %}
+<div class="product-card">
+    {% if product.badge %}<span class="badge">{{ product.badge }}</span>{% endif %}
+    <div class="img-wrapper">
+<img alt="{{ product.image_alt|default:product.title }}" loading="lazy" src="{{ product.image_url }}"/>
+<div class="img-overlay">
+<button class="icon-btn" data-product-action="quick-view" data-product-id="{{ product.id }}" data-product-detail-url="{{ product.detail_url }}" title="مشاهده سریع" type="button"><i class="fas fa-eye"></i></button>
+<button class="icon-btn{% if product.is_favorite %} active{% endif %}" data-product-action="favorite" data-product-id="{{ product.id }}" data-favorite-url="{% url 'toggle_favorite' product.id %}" title="افزودن به علاقه‌مندی" type="button"><i class="{% if product.is_favorite %}fas{% else %}far{% endif %} fa-heart"></i></button>
+</div>
+</div>
+<span class="category">{{ product.category_name }}</span>
+<h3>{{ product.title }}</h3>
+<span class="brand">{{ product.brand_name }}</span>
+<div class="price">{{ product.price_display }}</div>
+<div class="card-footer">
+<a class="detail-btn" href="{{ product.detail_url }}">مشاهده جزئیات</a>
+<button class="cart-btn" data-product-action="cart" data-product-id="{{ product.id }}" data-cart-url="{% url 'add_to_cart' product.id %}" title="افزودن به سبد خرید" type="button"><i class="fas fa-shopping-cart"></i></button>
+</div>
+</div>
+{% empty %}
+<!-- No latest products. -->
+{% endfor %}</div>
+</div>
+<div class="all-btn"><a href="{% url 'shop' %}">مشاهده همه محصولات</a></div>
+</section>
+<section class="about-section">
+<div class="container">
+<div class="about-content">
+<span class="section-tag">درباره ما</span>
+<h2>همراه مطمئن شما در مسیر سلامت</h2>
+<p>با بیش از ۱۵ سال تجربه در زمینه تأمین و واردات تجهیزات پزشکی و دندانپزشکی، همواره تلاش کرده‌ایم بهترین محصولات و خدمات را به مراکز درمانی، کلینیک‌ها و پزشکان عزیز ارائه دهیم.</p>
+<ul class="features-list">
+<li>ارائه محصولات اصل و دارای گارانتی معتبر</li>
+<li>مشاوره تخصصی قبل و بعد از خرید</li>
+<li>خدمات پس از فروش و پشتیبانی سریع</li>
+<li>آموزش و نصب تجهیزات توسط کارشناسان مجرب</li>
+</ul>
+<div class="stats">
+
+
+{% for stat in company_highlights %}<div class="stat">{{ stat.value }} {{ stat.label }}</div>{% endfor %}</div>
+<a class="about-btn" href="{% url 'about' %}"> بیشتر درباره ما <span>←</span> </a>
+</div>
+<div class="about-gallery">
+<div class="main-image"><img alt="hospital" src="{% static 'images/darbarema1.jpeg' %}"/></div>
+<div class="badge"><span>تجهیزات اصلی</span><h3>100%</h3><p>با گارانتی معتبر</p></div>
+<div class="small-images">
+<img alt="azmayeshgah" src="{% static 'images/azmayeshgah.jpeg' %}"/>
+<img alt="hospital" src="{% static 'images/bimarestan.jpeg' %}"/>
+</div>
+</div>
+</div>
+</section>
+<section class="newsletter">
+<div class="newsletter-icon">
+<svg fill="none" viewbox="0 0 24 24"><path d="M3 6L12 13L21 6" stroke="currentColor" stroke-width="1.8"></path><rect height="16" rx="2" stroke="currentColor" stroke-width="1.8" width="18" x="3" y="4"></rect><path d="M3 20L9.5 13.5" stroke="currentColor" stroke-width="1.8"></path><path d="M21 20L14.5 13.5" stroke="currentColor" stroke-width="1.8"></path></svg>
+</div>
+<div class="newsletter-content">
+<h3>از جدیدترین محصولات و مقالات ما باخبر شوید</h3>
+<p>با عضویت در خبرنامه ما از جدیدترین محصولات، تخفیف‌ها و مقالات تخصصی مطلع شوید.</p>
+</div>
+<form action="{% url 'newsletter_subscribe' %}" class="newsletter-form" method="post" data-ajax-form="newsletter">
+{% csrf_token %}
+<span class="label">خبرنامه مدریت</span>
+<div class="input-group">
+<input name="email" placeholder="ایمیل خود را وارد کنید" required="" type="email"/>
+<button type="submit">عضویت</button>
+</div>
+</form>
+</section>
+<footer class="footer">
+<div class="footer-container">
+<div class="footer-col contact-col">
+<h3>اطلاعات تماس</h3>
+<ul class="contact-list">
+<li><span>{{ site_settings.phone_display|default:"09372105008" }}</span><i class="fa-solid fa-phone"></i></li>
+<li><span>09372108005</span><i class="fa-solid fa-mobile-screen"></i></li>
+<li><span>{{ site_settings.email|default:"azaryazdan@gmail.com" }}</span><i class="fa-regular fa-envelope"></i></li>
+<li><span>تبریز 17 شهریور جدید <br/>جنب بانک ملت کوی نوبری جنب فروشگاه پالتار شرکت آدریزدان پلاک18</span><i class="fa-solid fa-location-dot"></i></li>
+</ul>
+</div>
+<div class="footer-col"><h3>خدمات</h3><ul><li><a href="#">مشاوره تخصصی</a></li><li><a href="#">خدمات پس از فروش</a></li><li><a href="#">آموزش و نصب</a></li><li><a href="#">گارانتی و ضمانت</a></li><li><a href="#">پشتیبانی آنلاین</a></li></ul></div>
+<div class="footer-col"><h3>دسترسی سریع</h3><ul><li><a href="{% url 'home' %}">صفحه اصلی</a></li><li><a href="{% url 'about' %}">درباره ما</a></li><li><a href="{% url 'shop' %}">برندها</a></li><li><a href="{% url 'blog' %}">مقالات</a></li><li><a href="{% url 'faq_list' %}">سوالات متداول</a></li><li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس با ما</a></li></ul></div>
+<div class="footer-col"><h3>محصولات</h3><ul><li><a href="{% url 'shop' %}">تجهیزات دندانپزشکی</a></li><li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li><li><a href="{% url 'shop' %}">تجهیزات آزمایشگاهی</a></li><li><a href="{% url 'shop' %}">تجهیزات تصویربرداری</a></li><li><a href="{% url 'shop' %}">تجهیزات استریل</a></li><li><a href="{% url 'shop' %}">تجهیزات مصرفی</a></li></ul></div>
+<div class="footer-col company-col">
+<div class="logo">
+<div class="logo-icon"><i class="fa-solid fa-heart-circle-plus"></i></div>
+<div><h2>{{ site_settings.brand_name|default:"AZARYAZDAN" }}</h2><span>تجهیزات پزشکی و دندانپزشکی</span></div>
+</div>
+<p class="about-text">ارائه دهنده تجهیزات پزشکی و دندانپزشکی از برندهای معتبر جهانی با بهترین قیمت و خدمات پس از فروش</p>
+<div class="socials">
+<a href="#"><i class="fa-brands fa-instagram"></i></a>
+<a href="#"><i class="fa-brands fa-telegram"></i></a>
+<a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+<a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="footer-links"><a href="#">شرایط و قوانین</a><a href="#">سیاست حفظ حریم خصوصی</a></div>
+<div class="copyright">© 1405 تمامی حقوق این وبسایت متعلق به شرکت مدی‌دنت می‌باشد.</div>
+</div>
+<a class="scroll-top" href="#" id="scrollTopBtn"><i class="fa-solid fa-arrow-up"></i></a>
+</footer>
+<script src="{% static 'js/landingg.js' %}"></script>
+</body>
+</html>

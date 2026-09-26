@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+<head>
+{% load static %}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>احراز هویت - تجهیزات پزشکی پیشرفته</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static 'css/loginnn.css' %}">
+</head>
+<body data-verify-url="{% url 'verify_otp' %}">
+<!-- Main Mockup Container -->
+<div class="mockup-container">
+<!-- ========== LEFT PANEL ========== -->
+<div class="left-panel">
+<!-- Glow Orbs -->
+<div class="glow-orb orb-1"></div>
+<div class="glow-orb orb-2"></div>
+<div class="glow-orb orb-3"></div>
+<!-- Logo -->
+<div class="logo-area">
+<div class="logo-icon">
+<svg fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="white" fill-opacity="0.95" height="18" rx="5" width="18" x="3" y="3"></rect>
+<rect fill="#1E88E5" height="14" rx="3" width="6" x="9" y="5"></rect>
+<rect fill="#0B5ED7" height="6" rx="3" width="14" x="5" y="9"></rect>
+</svg>
+</div>
+<span class="logo-text">AZARYAZDAN</span>
+</div>
+<!-- Slogan -->
+<div class="slogan-area">
+<div class="slogan-divider"></div>
+<p class="slogan-text">Professional Medical Equipment<br/>For Modern Healthcare</p>
+</div>
+<!-- Central Illustration -->
+<div class="illustration-area">
+<!-- Floating glass cards -->
+<div class="glass-card-float card-1">
+<svg class="gc-icon" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" fill="none" r="10" stroke="white" stroke-width="1.5"></circle>
+<polyline fill="none" points="8,12 11,15 16,9" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline>
+</svg>
+<div class="gc-text">استاندارد FDA</div>
+<div class="gc-sub">تاییدیه کیفیت</div>
+</div>
+<div class="glass-card-float card-2">
+<svg class="gc-icon" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="none" height="13" rx="3" stroke="white" stroke-width="1.5" width="18" x="3" y="6"></rect>
+<line stroke="white" stroke-linecap="round" stroke-width="1.5" x1="8" x2="16" y1="11" y2="11"></line>
+<line opacity="0.7" stroke="white" stroke-linecap="round" stroke-width="1.2" x1="8" x2="13" y1="14" y2="14"></line>
+</svg>
+<div class="gc-text">مانیتورینگ دقیق</div>
+<div class="gc-sub">دقت بالا</div>
+</div>
+<!-- Floating crosses -->
+<svg class="floating-cross cross-1" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="white" height="18" rx="3" width="6" x="9" y="3"></rect>
+<rect fill="white" height="6" rx="3" width="18" x="3" y="9"></rect>
+</svg>
+<svg class="floating-cross cross-2" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="white" height="18" rx="3" width="6" x="9" y="3"></rect>
+<rect fill="white" height="6" rx="3" width="18" x="3" y="9"></rect>
+</svg>
+<svg class="floating-cross cross-3" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="white" height="18" rx="3" width="6" x="9" y="3"></rect>
+<rect fill="white" height="6" rx="3" width="18" x="3" y="9"></rect>
+</svg>
+<!-- Medical Device SVG -->
+<div class="device-wrapper">
+<svg class="device-svg" fill="none" viewbox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+<!-- Device shadow -->
+<ellipse cx="80" cy="208" fill="rgba(0,0,0,0.15)" filter="url(#blur-shadow)" rx="50" ry="8"></ellipse>
+<defs>
+<filter id="blur-shadow">
+<fegaussianblur stddeviation="3"></fegaussianblur>
+</filter>
+<lineargradient id="deviceBody" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0%" stop-color="#e8ecf2"></stop>
+<stop offset="20%" stop-color="#f8f9fb"></stop>
+<stop offset="50%" stop-color="#ffffff"></stop>
+<stop offset="80%" stop-color="#f4f6f9"></stop>
+<stop offset="100%" stop-color="#dce2ea"></stop>
+</lineargradient>
+<lineargradient id="screenGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#1a1d23"></stop>
+<stop offset="100%" stop-color="#0d1117"></stop>
+</lineargradient>
+<lineargradient id="screenGlow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(90,169,255,0.3)"></stop>
+<stop offset="100%" stop-color="rgba(30,136,229,0.08)"></stop>
+</lineargradient>
+</defs>
+<!-- Main body -->
+<rect fill="url(#deviceBody)" height="175" rx="16" stroke="#d5dce6" stroke-width="1.5" width="76" x="42" y="18"></rect>
+<!-- Top accent bar -->
+<rect fill="#1E88E5" height="5" opacity="0.7" rx="2.5" width="64" x="48" y="24"></rect>
+<!-- Screen bezel -->
+<rect fill="#2a2d35" height="62" rx="8" stroke="#1a1d24" stroke-width="1.5" width="56" x="52" y="38"></rect>
+<!-- Screen display -->
+<rect fill="url(#screenGrad)" height="54" rx="5" width="48" x="56" y="42"></rect>
+<!-- Screen glow overlay -->
+<rect fill="url(#screenGlow)" height="54" opacity="0.5" rx="5" width="48" x="56" y="42"></rect>
+<!-- Vital signs waveform on screen -->
+<polyline fill="none" opacity="0.9" points="60,78 65,72 70,80 75,62 80,74 85,56 90,70 95,50 100,68" stroke="#5AA9FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></polyline>
+<polyline fill="none" opacity="0.55" points="60,84 65,80 70,86 75,78 80,83 85,76 90,82 95,74 100,81" stroke="#1E88E5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"></polyline>
+<!-- Screen heart rate number -->
+<text fill="#5AA9FF" font-family="'Vazirmatn',sans-serif" font-size="9" font-weight="700" opacity="0.9" x="62" y="58">♥ ۷۲</text>
+<text fill="#94A3B8" font-family="'Vazirmatn',sans-serif" font-size="7" font-weight="500" opacity="0.7" x="85" y="58">BPM</text>
+<!-- LED indicators -->
+<circle cx="56" cy="110" fill="#10b981" opacity="0.9" r="3.5"></circle>
+<circle cx="56" cy="110" fill="#10b981" filter="url(#blur-shadow)" opacity="0.35" r="3.5"></circle>
+<circle cx="68" cy="110" fill="#5AA9FF" opacity="0.8" r="3"></circle>
+<circle cx="80" cy="110" fill="#94A3B8" opacity="0.5" r="2.5"></circle>
+<!-- Control buttons -->
+<rect fill="#e8ecf2" height="7" rx="3.5" stroke="#d5dce6" stroke-width="1" width="48" x="56" y="122"></rect>
+<rect fill="#e8ecf2" height="7" rx="3.5" stroke="#d5dce6" stroke-width="1" width="48" x="56" y="134"></rect>
+<rect fill="#1E88E5" height="7" opacity="0.85" rx="3.5" stroke="#0B5ED7" stroke-width="1" width="22" x="56" y="146"></rect>
+<rect fill="#e8ecf2" height="7" rx="3.5" stroke="#d5dce6" stroke-width="1" width="22" x="82" y="146"></rect>
+<!-- Bottom port / connector -->
+<rect fill="#dce2ea" height="14" rx="5" stroke="#c5cdd8" stroke-width="1" width="28" x="66" y="160"></rect>
+<rect fill="#c5cdd8" height="8" rx="3" width="16" x="72" y="174"></rect>
+<!-- Medical cross emblem on body -->
+<rect fill="#1E88E5" height="5" opacity="0.3" rx="2" width="18" x="71" y="100"></rect>
+<rect fill="#1E88E5" height="18" opacity="0.3" rx="2" width="5" x="77.5" y="93.5"></rect>
+<!-- Subtle highlight reflection -->
+<rect fill="white" height="155" opacity="0.25" rx="3" width="6" x="48" y="28"></rect>
+</svg>
+</div>
+<!-- Podium -->
+<div class="podium">
+<div class="podium-top"></div>
+<div class="podium-body"></div>
+<div class="podium-base"></div>
+<div class="podium-shadow"></div>
+</div>
+</div>
+</div>
+<!-- ========== RIGHT PANEL ========== -->
+<div class="right-panel" id="rightPanel">
+<div class="auth-card" id="authCard">
+<!-- Tabs -->
+<div class="auth-tabs" id="authTabs">
+<button class="auth-tab active" data-tab="login" id="tabLogin">ورود</button>
+<button class="auth-tab" data-tab="register" id="tabRegister">ایجاد حساب کاربری</button>
+</div>
+<!-- Login Form -->
+<form action="{% url 'login_request_otp' %}" class="auth-form" data-backend-endpoint="{% url 'login_request_otp' %}" id="formLogin" method="post">
+{% csrf_token %}
+<h2 class="form-title">ورود به حساب کاربری</h2>
+<p class="form-subtitle">شماره تلفن خود را وارد کنید تا کد ورود برای شما ارسال شود.</p>
+<div class="input-group">
+<label class="input-label" for="phoneLogin">شماره تلفن</label>
+<input autocomplete="tel" class="input-field tel-input" id="phoneLogin" inputmode="numeric" maxlength="11" name="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" type="tel"/>
+</div>
+<button class="btn-submit" id="btnLoginSubmit" type="button">ارسال کد ورود</button>
+</form>
+<!-- Register Form -->
+<form action="{% url 'register_request_otp' %}" class="auth-form inline-style-1" data-backend-endpoint="{% url 'register_request_otp' %}" id="formRegister" method="post">
+{% csrf_token %}
+<h2 class="form-title">ایجاد حساب کاربری</h2>
+<p class="form-subtitle">اطلاعات خود را وارد کنید تا حساب کاربری جدید ایجاد شود.</p>
+<div class="input-group">
+<label class="input-label" for="fullName">نام و نام خانوادگی</label>
+<input autocomplete="name" class="input-field" id="fullName" name="full_name" placeholder="نام کامل خود را وارد کنید" type="text"/>
+</div>
+<div class="input-group">
+<label class="input-label" for="phoneRegister">شماره تلفن</label>
+<input autocomplete="tel" class="input-field tel-input" id="phoneRegister" inputmode="numeric" maxlength="11" name="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" type="tel"/>
+</div>
+<button class="btn-submit" id="btnRegisterSubmit" type="button">دریافت کد تایید</button>
+</form>
+<!-- OTP Section (hidden by default) -->
+<div class="otp-section" id="otpSection">
+<button class="btn-back" id="btnBack" type="button">
+<svg fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 18L9 12L15 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+                        بازگشت
+                    </button>
+<h2 class="form-title">تایید کد</h2>
+<p class="otp-info" id="otpInfoText">
+                        کد تایید ۶ رقمی به شماره <span class="phone-highlight" id="otpPhoneDisplay">۰۹۱۲۳۴۵۶۷۸۹</span> ارسال شد.
+                    </p>
+<div class="otp-boxes" id="otpBoxes">
+<input class="otp-input" data-index="0" inputmode="numeric" maxlength="1" name="otp_1" pattern="[0-9]" type="text"/>
+<input class="otp-input" data-index="1" inputmode="numeric" maxlength="1" name="otp_2" pattern="[0-9]" type="text"/>
+<input class="otp-input" data-index="2" inputmode="numeric" maxlength="1" name="otp_3" pattern="[0-9]" type="text"/>
+<input class="otp-input" data-index="3" inputmode="numeric" maxlength="1" name="otp_4" pattern="[0-9]" type="text"/>
+<input class="otp-input" data-index="4" inputmode="numeric" maxlength="1" name="otp_5" pattern="[0-9]" type="text"/>
+<input class="otp-input" data-index="5" inputmode="numeric" maxlength="1" name="otp_6" pattern="[0-9]" type="text"/>
+</div>
+<button class="btn-submit" id="btnOtpVerify" type="button">تایید کد</button>
+<div class="otp-footer">
+<span>ارسال مجدد کد تا</span>
+<span class="countdown-timer" id="countdownTimer">۲:۰۰</span>
+<span>|</span>
+<a class="resend-link disabled" id="resendLink" role="button">ارسال مجدد</a>
+</div>
+<!-- Success indicator -->
+<div class="success-check" id="successCheck">
+<svg fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" fill="#ecfdf5" r="11" stroke="#10b981" stroke-width="2"></circle>
+<polyline fill="none" points="7,12 10.5,15.5 17,9" stroke="#10b981" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></polyline>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="{% static 'js/loginnn.js' %}"></script>
+</body>
+</html>

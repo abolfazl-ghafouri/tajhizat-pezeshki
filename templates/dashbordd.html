@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+<head>
+{% load static %}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>داشبورد مشتری - تجهیزات پزشکی</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="{% static 'css/dashbordd.css' %}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Mobile Header -->
+<div class="mobile-header" id="mobileHeader">
+<button aria-label="باز کردن منو" class="hamburger-btn" id="hamburgerBtn">
+<span></span>
+<span></span>
+<span></span>
+</button>
+<div class="mobile-brand">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<a aria-label="خروج" class="mobile-logout material-icons" href="{% url 'logout' %}" title="خروج">logout</a>
+</div>
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+<button aria-label="بستن منو" class="sidebar-close-btn" id="sidebarCloseBtn">
+<span class="material-icons">close</span>
+</button>
+<div class="sidebar-logo">
+<div class="logo-icon">
+<span class="material-icons">medical_services</span>
+</div>
+<div>
+<div class="logo-text">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<div class="logo-sub">پنل مشتری</div>
+</div>
+</div>
+<div class="nav-section">
+<div class="nav-section-title">حساب من</div>
+<a class="nav-item active" data-section="dashboard">
+<span class="nav-icon"><span class="material-icons">dashboard</span></span> داشبورد
+            </a>
+<a class="nav-item" data-section="orders">
+<span class="nav-icon"><span class="material-icons">receipt_long</span></span> سفارش‌های من
+                <span class="badge">{{ dashboard_stats.total_orders }}</span>
+</a>
+<a class="nav-item" data-section="favorites">
+<span class="nav-icon"><span class="material-icons">favorite</span></span> علاقه‌مندی‌ها
+                <span class="badge warn">{{ dashboard_stats.favorites_count }}</span>
+</a>
+<a class="nav-item" data-section="tickets">
+<span class="nav-icon"><span class="material-icons">support_agent</span></span> تیکت‌های پشتیبانی
+                <span class="badge">{{ dashboard_stats.open_tickets }}</span>
+</a>
+<a class="nav-item" data-section="profile">
+<span class="nav-icon"><span class="material-icons">person</span></span> اطلاعات حساب
+            </a>
+<a class="nav-item" data-section="addresses">
+<span class="nav-icon"><span class="material-icons">location_on</span></span> آدرس‌های من
+            </a>
+</div>
+<div class="sidebar-footer">
+<div class="user-mini">
+<div class="avatar">{% if dashboard_user.avatar_url %}<img alt="{{ dashboard_user.first_name }}" loading="lazy" src="{{ dashboard_user.avatar_url }}"/>{% else %}{{ dashboard_user.initials }}{% endif %}</div>
+<div class="info">
+<div class="name">{{ dashboard_user.first_name }} {{ dashboard_user.last_name }}</div>
+<div class="role">{{ dashboard_user.role }}</div>
+</div>
+<span class="material-icons inline-style-1">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+<!-- Dashboard Section -->
+<section class="content-section active" id="dashboard-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">waving_hand</span> سلام {{ dashboard_user.first_name }} جان!</h1>
+<p>تعداد سفارش‌های ثبت‌شده شما: {{ dashboard_stats.total_orders }}</p>
+</div>
+<div class="welcome-actions">
+<button class="btn btn-outline" data-dashboard-section="contact">
+<span class="material-icons">support_agent</span> پشتیبانی آنلاین
+                    </button>
+<button class="btn btn-primary" data-dashboard-action="new-order" data-shop-url="{% url 'shop' %}">
+<span class="material-icons">add_shopping_cart</span> سفارش جدید
+                    </button>
+</div>
+</div>
+<div class="stats-grid">
+<div class="stat-card" data-filter="all" data-navigate="orders">
+<div class="stat-icon"><span class="material-icons">receipt_long</span></div>
+<div class="stat-info">
+<div class="stat-value">{{ dashboard_stats.total_orders }}</div>
+<div class="stat-label">کل سفارش‌ها</div>
+</div>
+<div class="trend">{{ dashboard_stats.total_orders }} سفارش</div>
+</div>
+<div class="stat-card" data-filter="active" data-navigate="orders">
+<div class="stat-icon"><span class="material-icons">local_shipping</span></div>
+<div class="stat-info">
+<div class="stat-value">{{ dashboard_stats.active_orders }}</div>
+<div class="stat-label">سفارش فعال</div>
+</div>
+<div class="trend">{{ dashboard_stats.active_orders }} فعال</div>
+</div>
+<div class="stat-card" data-navigate="tickets">
+<div class="stat-icon"><span class="material-icons">support_agent</span></div>
+<div class="stat-info">
+<div class="stat-value">{{ dashboard_stats.open_tickets }}</div>
+<div class="stat-label">تیکت باز</div>
+</div>
+<div class="trend">{{ dashboard_stats.open_tickets }} باز</div>
+</div>
+<div class="stat-card" data-navigate="favorites">
+<div class="stat-icon"><span class="material-icons">favorite</span></div>
+<div class="stat-info">
+<div class="stat-value">{{ dashboard_stats.favorites_count }}</div>
+<div class="stat-label">مورد علاقه‌مندی</div>
+</div>
+<div class="trend">{{ dashboard_stats.favorites_count }} محصول</div>
+</div>
+</div>
+<div class="content-grid">
+<div class="card">
+<div class="card-header">
+<h3><span class="material-icons">history</span> سفارش‌های اخیر</h3>
+<span class="link" data-dashboard-section="orders">مشاهده همه ←</span>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>شماره سفارش</th><th>نام محصول</th><th>تاریخ</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+<tbody>
+
+
+
+
+{% for order in recent_orders %}<tr data-status="{{ order.status }}"><td><strong>#{{ order.number }}</strong></td><td>{{ order.items.first.product_title|default:"-" }}</td><td>{{ order.created_at|date:"Y/m/d" }}</td><td><span class="js-money">{{ order.final_amount }}</span></td><td><span class="status-pill{% if order.status == "pending" %} pending{% elif order.status == "paid" %} paid{% elif order.status == "shipping" %} shipping{% elif order.status == "delivered" %} delivered{% elif order.status == "cancelled" %} cancelled{% endif %}">{{ order.status_label }}</span></td></tr>{% empty %}<tr><td colspan="5">سفارشی برای نمایش وجود ندارد.</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<h3><span class="material-icons">confirmation_number</span> تیکت‌های پشتیبانی</h3>
+<span class="link" data-create-ticket-url="{% url 'create_ticket' %}">ثبت تیکت جدید ←</span>
+</div>
+<div class="ticket-list">
+
+
+
+{% for ticket in recent_tickets %}<div class="ticket-item" data-ticket-id="{{ ticket.id }}"><div class="ticket-icon ticket-icon-default"><span class="material-icons">support_agent</span></div><div class="ticket-info"><div class="ticket-title">{{ ticket.subject }}</div><div class="ticket-meta">#{{ ticket.number }} • {{ ticket.created_at|date:"Y/m/d" }}</div></div><span class="status-pill{% if ticket.status == "open" %} open{% elif ticket.status == "in_progress" %} in_progress{% elif ticket.status == "answered" %} answered{% elif ticket.status == "closed" %} closed{% endif %}">{{ ticket.status_label }}</span></div>{% empty %}<div class="empty-state">تیکت اخیری ندارید.</div>{% endfor %}</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<h3><span class="material-icons">favorite</span> علاقه‌مندی‌های اخیر</h3>
+<span class="link" data-dashboard-section="favorites">مشاهده لیست کامل ←</span>
+</div>
+<div class="fav-grid">
+
+
+
+
+{% for favorite in recent_favorites %}<div class="fav-card" data-product-id="{{ favorite.product.id }}" data-product-slug="{{ favorite.product.slug }}" data-product-detail-url="{% url 'product_detail' favorite.product.slug %}"><div class="fav-img"><img alt="{{ favorite.product.title }}" loading="lazy" src="{% if favorite.product.main_image %}{{ favorite.product.main_image.url }}{% else %}{% static 'images/main-img.jpeg' %}{% endif %}"/></div><div class="fav-info"><div class="fav-name">{{ favorite.product.title }}</div><div class="fav-bottom"><span class="fav-price js-money">{{ favorite.product.final_price }}</span><span class="material-icons cart-icon">shopping_cart</span></div></div></div>{% empty %}<div class="empty-state">مورد علاقه‌ای ثبت نشده است.</div>{% endfor %}</div>
+</div>
+</section>
+<!-- Orders Section -->
+<section class="content-section" id="orders-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">receipt_long</span> سفارش‌های من</h1>
+<p>مدیریت و پیگیری کلیه سفارش‌ها</p>
+</div>
+<button class="btn btn-primary" data-dashboard-action="new-order" data-shop-url="{% url 'shop' %}"><span class="material-icons">add_shopping_cart</span> ثبت سفارش جدید</button>
+</div>
+<div class="card">
+<div class="filter-tabs" id="order-filters">
+<span class="filter-tab active" data-filter="all">همه</span>
+<span class="filter-tab" data-filter="active">فعال</span>
+<span class="filter-tab" data-filter="shipping">در حال ارسال</span>
+<span class="filter-tab" data-filter="delivered">تحویل شده</span>
+<span class="filter-tab" data-filter="pending">در انتظار پرداخت</span>
+</div>
+<div class="table-wrap">
+<table id="orders-table">
+<thead><tr><th>شماره سفارش</th><th>نام محصول</th><th>تاریخ</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+<tbody>
+
+
+
+
+
+{% for order in orders %}<tr data-status="{{ order.status }}"><td><strong>#{{ order.number }}</strong></td><td>{{ order.items.first.product_title|default:"-" }}</td><td>{{ order.created_at|date:"Y/m/d" }}</td><td><span class="js-money">{{ order.final_amount }}</span></td><td><span class="status-pill{% if order.status == "pending" %} pending{% elif order.status == "paid" %} paid{% elif order.status == "shipping" %} shipping{% elif order.status == "delivered" %} delivered{% elif order.status == "cancelled" %} cancelled{% endif %}">{{ order.status_label }}</span></td></tr>{% empty %}<tr><td colspan="5">سفارشی برای نمایش وجود ندارد.</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Tickets Section -->
+<section class="content-section" id="tickets-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">confirmation_number</span> تیکت‌های پشتیبانی</h1>
+<p>پیگیری درخواست‌ها و مشکلات</p>
+</div>
+<button class="btn btn-primary" data-create-ticket-url="{% url 'create_ticket' %}"><span class="material-icons">add</span> ثبت تیکت جدید</button>
+</div>
+<div class="card">
+<div class="ticket-list">
+
+
+
+
+{% for ticket in tickets %}<div class="ticket-item" data-ticket-id="{{ ticket.id }}"><div class="ticket-icon ticket-icon-default"><span class="material-icons">support_agent</span></div><div class="ticket-info"><div class="ticket-title">{{ ticket.subject }}</div><div class="ticket-meta">#{{ ticket.number }} • {{ ticket.created_at|date:"Y/m/d" }}</div></div><span class="status-pill{% if ticket.status == "open" %} open{% elif ticket.status == "in_progress" %} in_progress{% elif ticket.status == "answered" %} answered{% elif ticket.status == "closed" %} closed{% endif %}">{{ ticket.status_label }}</span></div>{% empty %}<div class="empty-state">تیکتی برای نمایش وجود ندارد.</div>{% endfor %}</div>
+</div>
+</section>
+<!-- Favorites Section -->
+<section class="content-section" id="favorites-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">favorite</span> علاقه‌مندی‌ها</h1>
+<p>لیست محصولات مورد علاقه شما</p>
+</div>
+</div>
+<div class="fav-grid">
+
+
+
+
+{% for favorite in favorites %}<div class="fav-card" data-product-id="{{ favorite.product.id }}" data-product-slug="{{ favorite.product.slug }}" data-product-detail-url="{% url 'product_detail' favorite.product.slug %}"><div class="fav-img"><img alt="{{ favorite.product.title }}" loading="lazy" src="{% if favorite.product.main_image %}{{ favorite.product.main_image.url }}{% else %}{% static 'images/main-img.jpeg' %}{% endif %}"/></div><div class="fav-info"><div class="fav-name">{{ favorite.product.title }}</div><div class="fav-bottom"><span class="fav-price js-money">{{ favorite.product.final_price }}</span><span class="material-icons cart-icon">shopping_cart</span></div></div></div>{% empty %}<div class="empty-state">مورد علاقه‌ای ثبت نشده است.</div>{% endfor %}</div>
+</section>
+<!-- Profile Section -->
+<section class="content-section" id="profile-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">person</span> اطلاعات حساب</h1>
+<p>ویرایش اطلاعات شخصی و حساب کاربری</p>
+</div>
+</div>
+<div class="card">
+<form action="{% url 'update_profile' %}" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<div class="form-group"><label>نام و نام خانوادگی</label><input name="full_name" type="text" value="{{ profile.full_name }}"/></div>
+<div class="form-group"><label>شماره موبایل</label><input type="text" value="{{ profile.phone }}" readonly/></div>
+<div class="form-group"><label>ایمیل</label><input name="email" type="email" value="{{ profile.email }}"/></div>
+<button class="btn btn-primary" type="submit"><span class="material-icons">save</span> ذخیره تغییرات</button>
+</form>
+</div>
+</section>
+<!-- Addresses Section -->
+<section class="content-section" id="addresses-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">location_on</span> آدرس‌های من</h1>
+<p>مدیریت آدرس‌های ارسال</p>
+</div>
+<button class="btn btn-primary" data-create-address-url="{% url 'create_address' %}"><span class="material-icons">add</span> افزودن آدرس جدید</button>
+</div>
+<div class="card">
+
+
+{% for address in addresses %}<div class="address-card"><div class="address-text">{{ address.full_text }}</div><div class="address-actions"><button class="btn btn-outline" data-address-action="edit" data-address-id="{{ address.id }}" data-action-url="{% url 'edit_address' address.id %}" data-title="{{ address.title|escape }}" data-recipient-name="{{ address.recipient_name|escape }}" data-phone="{{ address.phone|escape }}" data-province="{{ address.province|escape }}" data-city="{{ address.city|escape }}" data-address="{{ address.address|escape }}" data-postal-code="{{ address.postal_code|escape }}" data-is-default="{{ address.is_default|yesno:'1,0' }}" type="button"><span class="material-icons">edit</span></button><button class="btn btn-outline" data-address-action="delete" data-address-id="{{ address.id }}" data-action-url="{% url 'delete_address' address.id %}" type="button"><span class="material-icons">delete</span></button></div></div>{% empty %}<div class="empty-state">آدرسی ثبت نشده است.</div>{% endfor %}</div>
+</section>
+<!-- FAQ Section -->
+<section class="content-section" id="faq-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">help</span> سوالات متداول</h1>
+<p>پاسخ به پرتکرارترین پرسش‌ها</p>
+</div>
+</div>
+<div class="card">{% for item in faqs %}<div class="faq-item"><div class="faq-q">{{ item.question }}</div><div class="faq-a">{{ item.answer }}</div></div>{% empty %}<div class="empty-state">سوال متداولی ثبت نشده است.</div>{% endfor %}</div>
+</section>
+<!-- Contact Section -->
+<section class="content-section" id="contact-section">
+<div class="welcome-bar">
+<div class="welcome-text">
+<h1><span class="material-icons">phone</span> تماس با ما</h1>
+<p>راه‌های ارتباط با پشتیبانی</p>
+</div>
+</div>
+<div class="content-grid equal">
+<div class="card">
+<h3 class="inline-style-4"><span class="material-icons inline-style-5">call</span> اطلاعات تماس</h3>
+<p class="inline-style-6"><strong>تلفن:</strong> {{ profile.phone }}</p>
+<p class="inline-style-6"><strong>واتس‌اپ:</strong> ۰۹۱۰۱۲۳۴۵۶۷</p>
+<p class="inline-style-6"><strong>ایمیل:</strong> {{ profile.email|default:"ایمیل ثبت نشده است" }}</p>
+<p class="inline-style-7"><strong>ساعت کاری:</strong> شنبه تا پنجشنبه ۸ تا ۲۰</p>
+</div>
+<div class="card">
+<h3 class="inline-style-4"><span class="material-icons inline-style-5">email</span> ارسال پیام</h3>
+<form action="{% url 'send_contact_message' %}" method="post" data-ajax-form="contact">
+{% csrf_token %}
+<input type="hidden" name="name" value="{{ dashboard_user.first_name }} {{ dashboard_user.last_name }}"/>
+<input type="hidden" name="email" value="{{ dashboard_user.email }}"/>
+<input type="hidden" name="phone" value="{{ dashboard_user.phone }}"/>
+<div class="form-group"><label>موضوع</label><input name="subject" placeholder="موضوع پیام" type="text" required/></div>
+<div class="form-group"><label>پیام</label><textarea name="message" placeholder="متن پیام خود را بنویسید..." required></textarea></div>
+<button class="btn btn-primary" type="submit"><span class="material-icons">send</span> ارسال</button>
+</form>
+</div>
+</div>
+</section>
+</main>
+<script src="{% static 'js/dashbordd.js' %}"></script>
+</body>
+</html>

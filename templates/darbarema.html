@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+<head>
+{% load static %}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<title>درباره ما | تجهیزات پزشکی آذریزدی</title>
+<link href="{% static 'css/darbarema.css' %}" rel="stylesheet"/>
+</head>
+<body>
+<div class="topbar">
+<div class="container">
+<div class="topbar-right">
+<a href="tel:{{ site_settings.phone|default:'09372105008' }}"><i class="fa-solid fa-phone"></i> {{ site_settings.phone_display|default:"۰۲۱-۱۲۳۴۵۶۷۸" }}</a>
+<a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}"><i class="fa-solid fa-envelope"></i> {{ site_settings.email|default:"info@azaryazdan.ir" }}</a>
+</div>
+<div class="topbar-left">
+<i class="fa-solid fa-user"></i>
+{% if request.user.is_authenticated %}
+<a class="auth-btn" href="{% url 'dashboard' %}">داشبورد</a>
+<a class="auth-btn register" href="{% url 'logout' %}">خروج</a>
+{% else %}
+<a class="auth-btn" href="{% url 'login' %}">ورود</a>
+<a class="auth-btn register" href="{% url 'login' %}#register">ثبت نام</a>
+{% endif %}
+</div>
+</div>
+</div>
+<header class="header">
+<div class="container">
+<div class="logo">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<div class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</div>
+<nav id="navMenu">
+<ul>
+<li><a href="{% url 'home' %}">خانه</a></li>
+<li><a href="{% url 'shop' %}">محصولات</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+<li><a href="{% url 'shop' %}">دندانپزشکی</a></li>
+<li><a href="{% url 'shop' %}">برندها</a></li>
+<li><a href="{% url 'blog' %}">وبلاگ</a></li>
+<li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس</a></li>
+</ul>
+</nav>
+<div class="header-icons">
+<i class="fa-solid fa-magnifying-glass" data-navigation-url="{% url 'shop' %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-heart" data-navigation-url="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-cart-shopping" data-navigation-url="{% url 'cart' %}" role="link" tabindex="0"></i>
+</div>
+</div>
+</header>
+<main class="container">
+<section class="intro-section section-padding">
+<div class="intro-wrapper">
+<div class="intro-text-col">
+<div class="intro-headline">
+<h1 class="text-dark">درباره ما</h1>
+</div>
+<h2 class="section-title text-primary">همراه مطمئن شما در مسیر سلامت و لبخند زیبا</h2>
+<p class="intro-desc">
+{% if site_settings.about_text %}{{ site_settings.about_text }}{% else %}مدیدنت از سال ۱۳۹۳ با هدف تأمین و ارائه بهترین تجهیزات دندانپزشکی و پزشکی فعالیت خود را آغاز کرده است. ما با تکیه بر تجربه، تخصص و تعهد به کیفیت، همواره تلاش کرده‌ایم تا نیازهای شما عزیزان را برآورده سازیم و در این راه از همراهی متخصصان و مشتریان عزیز خود بی‌نهایت سپاسگزاریم.{% endif %}
+</p>
+<ul class="intro-features">
+<li><i class="fas fa-check-circle"></i> ارائه بهترین برندهای روز دنیا</li>
+<li><i class="fas fa-check-circle"></i> مشاوره تخصصی قبل و بعد از خرید</li>
+<li><i class="fas fa-check-circle"></i> خدمات پس از فروش و پشتیبانی حرفه‌ای</li>
+</ul>
+</div>
+<div class="intro-image-col">
+<img alt="دندانپزشکی" src="{% static 'images/dandanmiz.jpeg' %}"/>
+</div>
+</div>
+</section>
+<section class="stats-section">
+<div class="stats-grid">
+
+
+
+
+{% for stat in company_stats %}<div class="stat-card"><div class="stat-icon-wrapper"><i class="{{ stat.icon }}"></i></div><div class="number">{{ stat.value }}</div><div class="label">{{ stat.label }}</div></div>{% endfor %}</div>
+</section>
+<section class="middle-banner section-padding">
+<div class="banner-wrapper">
+<div class="banner-text-col">
+<h2>مدیدنت، کیفیتی که می‌توانید به آن اعتماد کنید</h2>
+<p>
+                        ما در مدیدنت با بهره‌گیری از دانش تخصصی و همکاری با برندهای معتبر جهانی، مجموعه‌ای کامل از تجهیزات دندانپزشکی و پزشکی را برای مطب‌ها، کلینیک‌ها و مراکز درمانی فراهم کرده‌ایم. هدف ما تسهیل مسیر حرفه‌ای شما و ارتقای سطح خدمات به بیماران است.
+                    </p>
+<div class="banner-features">
+<div class="banner-feature-item"><i class="fas fa-box-open"></i><h6>محصولات با کیفیت</h6></div>
+<div class="banner-feature-item"><i class="fas fa-file-invoice-dollar"></i><h6>قیمت‌گذاری منصفانه</h6></div>
+<div class="banner-feature-item"><i class="fas fa-truck"></i><h6>ارسال سریع به سراسر کشور</h6></div>
+<div class="banner-feature-item"><i class="fas fa-headset"></i><h6>پشتیبانی همیشگی</h6></div>
+</div>
+</div>
+<div class="banner-img-col">
+<img alt="Medident Storefront" src="{% static 'images/bimarestan.jpeg' %}"/>
+</div>
+</div>
+</section>
+<section class="values-section">
+<div class="container">
+<h2 class="section-title text-center">ارزش‌های ما</h2>
+<div class="values-grid">
+<div class="value-card"><i class="fas fa-lightbulb"></i><h5>نوآوری</h5><p>همواره در جستجوی جدیدترین محصولات و تکنولوژی‌های روز دنیا</p></div>
+<div class="value-card"><i class="fas fa-shield-alt"></i><h5>اعتماد</h5><p>ایجاد اعتماد پایدار از طریق کیفیت، صداقت و مسئولیت‌پذیری</p></div>
+<div class="value-card"><i class="fas fa-handshake"></i><h5>مشتری‌مداری</h5><p>رضایت مشتریان اولویت اصلی ما در تمام مراحل همکاری</p></div>
+<div class="value-card"><i class="fas fa-award"></i><h5>کیفیت</h5><p>تضمین اصالت و کیفیت تمامی محصولات ارائه شده</p></div>
+</div>
+</div>
+</section>
+<section class="team-section">
+<div class="container">
+<h2 class="section-title text-center">تیم ما</h2>
+<p class="section-subtitle text-center">متشکل از متخصصان حرفه‌ای و متعهد در کنار شما هستیم</p>
+<div class="team-grid">{% for member in team_members %}<div class="team-card"><div class="team-card-img-wrap"><img alt="{{ member.name }}" src="{% if member.image_url %}{{ member.image_url }}{% else %}{% static 'images/mard1.jpeg' %}{% endif %}" loading="lazy"></div><div class="team-card-body"><h5>{{ member.name }}</h5><span class="role">{{ member.role }}</span><div class="team-card-socials"><a href="{{ member.linkedin_url|default:'#' }}"><i class="fa-brands fa-linkedin-in"></i></a><a href="{{ member.instagram_url|default:'#' }}"><i class="fa-brands fa-instagram"></i></a><a href="mailto:{{ member.email }}"><i class="fa-regular fa-envelope"></i></a></div></div></div>{% endfor %}</div>
+</div>
+</section>
+</main>
+<footer class="footer">
+<div class="footer-container">
+<div class="footer-col contact-col">
+<h3>اطلاعات تماس</h3>
+<ul class="contact-list">
+<li><span>{{ site_settings.phone_display|default:"09372105008" }}</span><i class="fa-solid fa-phone"></i></li>
+<li><span>09372108005</span><i class="fa-solid fa-mobile-screen"></i></li>
+<li><span>{{ site_settings.email|default:"azaryazdan@gmail.com" }}</span><i class="fa-regular fa-envelope"></i></li>
+<li><span>تبریز 17 شهریور جدید <br/>جنب بانک ملت کوی نوبری جنب فروشگاه پالتار شرکت آدریزدان پلاک18</span><i class="fa-solid fa-location-dot"></i></li>
+</ul>
+</div>
+<div class="footer-col"><h3>خدمات</h3><ul><li><a href="#">مشاوره تخصصی</a></li><li><a href="#">خدمات پس از فروش</a></li><li><a href="#">آموزش و نصب</a></li><li><a href="#">گارانتی و ضمانت</a></li><li><a href="#">پشتیبانی آنلاین</a></li></ul></div>
+<div class="footer-col"><h3>دسترسی سریع</h3><ul><li><a href="{% url 'home' %}">صفحه اصلی</a></li><li><a href="{% url 'about' %}">درباره ما</a></li><li><a href="{% url 'shop' %}">برندها</a></li><li><a href="{% url 'blog' %}">مقالات</a></li><li><a href="{% url 'faq_list' %}">سوالات متداول</a></li><li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس با ما</a></li></ul></div>
+<div class="footer-col"><h3>محصولات</h3><ul><li><a href="{% url 'shop' %}">تجهیزات دندانپزشکی</a></li><li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li><li><a href="{% url 'shop' %}">تجهیزات آزمایشگاهی</a></li><li><a href="{% url 'shop' %}">تجهیزات تصویربرداری</a></li><li><a href="{% url 'shop' %}">تجهیزات استریل</a></li><li><a href="{% url 'shop' %}">تجهیزات مصرفی</a></li></ul></div>
+<div class="footer-col company-col">
+<div class="logo">
+<div class="logo-icon"><i class="fa-solid fa-heart-circle-plus"></i></div>
+<div><h2>{{ site_settings.brand_name|default:"AZARYAZDAN" }}</h2><span>تجهیزات پزشکی و دندانپزشکی</span></div>
+</div>
+<p class="about-text">ارائه دهنده تجهیزات پزشکی و دندانپزشکی از برندهای معتبر جهانی با بهترین قیمت و خدمات پس از فروش</p>
+<div class="socials">
+<a href="#"><i class="fa-brands fa-instagram"></i></a>
+<a href="#"><i class="fa-brands fa-telegram"></i></a>
+<a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+<a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="footer-links"><a href="#">شرایط و قوانین</a><a href="#">سیاست حفظ حریم خصوصی</a></div>
+<div class="copyright">© 1405 تمامی حقوق این وبسایت متعلق به شرکت مدی‌دنت می‌باشد.</div>
+</div>
+<a class="scroll-top" href="#" id="scrollTopBtn"><i class="fa-solid fa-arrow-up"></i></a>
+</footer>
+<script src="{% static 'js/darbarema.js' %}"></script>
+</body>
+</html>
