@@ -140,3 +140,18 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'accounts.User'
+
+
+ZARINPAL_MERCHANT_ID = '00000000-0000-0000-0000-000000000000'
+
+ZARINPAL_SANDBOX_REQUEST_URL = (
+    'https://sandbox.zarinpal.com/pg/v4/payment/request.json'
+)
+
+ZARINPAL_SANDBOX_VERIFY_URL = (
+    'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
+)
+
+ZARINPAL_SANDBOX_STARTPAY_URL = (
+    'https://sandbox.zarinpal.com/pg/StartPay/'
+)

@@ -1,5 +1,12 @@
 from uuid import uuid4
 
+from accounts.models import Address
+
+import requests
+
+from django.conf import settings
+from django.urls import reverse
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
@@ -9,6 +16,109 @@ from django.views.decorators.http import require_POST
 
 from .forms import CheckoutForm, CouponForm
 from .models import Cart, CartItem, Coupon, Order, OrderItem
+
+
+
+def zarinpal_request_payment(
+    order,
+    request,
+):
+
+    amount = order.final_amount * 10
+
+    callback_url = request.build_absolute_uri(
+        reverse(
+            'zarinpal_verify'
+        )
+    )
+
+    data = {
+        'merchant_id': settings.ZARINPAL_MERCHANT_ID,
+        'amount': amount,
+        'description': (
+            f'پرداخت سفارش {order.number}'
+        ),
+        'callback_url': callback_url,
+        'metadata': {
+            'mobile': order.phone,
+        },
+    }
+
+    try:
+
+        response = requests.post(
+            settings.ZARINPAL_SANDBOX_REQUEST_URL,
+            json=data,
+            headers={
+                'Content-Type': 'application/json',
+                'User-Agent': 'ZarinPal Rest Api v1',
+            },
+            timeout=15,
+        )
+
+    except requests.RequestException as error:
+
+        print('\n' + '=' * 60)
+        print('ZARINPAL REQUEST ERROR:')
+        print(error)
+        print('=' * 60 + '\n')
+
+        return None
+
+    print('\n' + '=' * 60)
+    print(
+        'ZARINPAL REQUEST STATUS:',
+        response.status_code
+    )
+    print(
+        'ZARINPAL REQUEST CONTENT-TYPE:',
+        response.headers.get('Content-Type')
+    )
+    print('ZARINPAL REQUEST RESPONSE:')
+    print(response.text)
+    print('=' * 60 + '\n')
+
+    try:
+
+        result = response.json()
+
+    except ValueError:
+
+        print(
+            'ZARINPAL REQUEST RESPONSE IS NOT JSON.'
+        )
+
+        return None
+
+    if (
+        response.ok
+        and not result.get('errors')
+        and result.get('data', {}).get('code') == 100
+    ):
+
+        authority = (
+            result['data']['authority']
+        )
+
+        order.payment_authority = authority
+
+        order.save(
+            update_fields=[
+                'payment_authority',
+            ]
+        )
+
+        return (
+            settings.ZARINPAL_SANDBOX_STARTPAY_URL
+            + authority
+        )
+
+    print('\n' + '=' * 60)
+    print('ZARINPAL REQUEST FAILED:')
+    print(result)
+    print('=' * 60 + '\n')
+
+    return None
 
 
 def get_user_cart(user):
@@ -141,7 +251,6 @@ def cart(request):
     coupon_data = None
 
     if coupon:
-
         coupon_data = {
             'code': coupon.code,
             'discount_percent': coupon.discount_percent,
@@ -150,10 +259,41 @@ def cart(request):
             ),
         }
 
+    # ---------------- CHECKOUT FORM ----------------
+
+    default_address = (
+        Address.objects
+        .filter(
+            user=request.user,
+            is_default=True,
+        )
+        .first()
+    )
+
+    initial_data = {
+        'customer_name': request.user.full_name,
+        'phone': request.user.phone,
+        'city': '',
+        'address': '',
+        'postal_code': '',
+    }
+
+    if default_address:
+        initial_data.update({
+            'city': default_address.city,
+            'address': default_address.address,
+            'postal_code': default_address.postal_code,
+        })
+
+    checkout_form = CheckoutForm(
+        initial=initial_data
+    )
+
     context = {
         'cart_items': items,
         'cart_summary': summary,
         'coupon': coupon_data,
+        'checkout_form': checkout_form,
     }
 
     return render(
@@ -429,6 +569,10 @@ def remove_coupon(request):
 @login_required
 def checkout(request):
 
+    # ------------------------------------------
+    # دریافت سبد خرید کاربر
+    # ------------------------------------------
+
     user_cart = get_user_cart(
         request.user
     )
@@ -439,24 +583,64 @@ def checkout(request):
         .all()
     )
 
+    # اگر سبد خالی است
     if not cart_items.exists():
-
         return redirect('cart')
+
+    # ------------------------------------------
+    # دریافت کوپن فعال
+    # ------------------------------------------
 
     coupon = get_active_coupon(
         request
     )
 
+    # ------------------------------------------
+    # دریافت آدرس پیش فرض کاربر
+    # ------------------------------------------
+
+    default_address = (
+        Address.objects
+        .filter(
+            user=request.user,
+            is_default=True,
+        )
+        .first()
+    )
+
+    # ------------------------------------------
+    # اطلاعات اولیه فرم
+    # ------------------------------------------
+
+    initial_data = {
+        'customer_name': request.user.full_name,
+        'phone': request.user.phone,
+        'city': '',
+        'address': '',
+        'postal_code': '',
+    }
+
+    if default_address:
+
+        initial_data.update({
+            'city': default_address.city,
+            'address': default_address.address,
+            'postal_code': default_address.postal_code,
+        })
+
+    # ------------------------------------------
+    # GET
+    # ------------------------------------------
+
     if request.method == 'GET':
 
         form = CheckoutForm(
-            initial={
-                'customer_name': (
-                    request.user.full_name
-                ),
-                'phone': request.user.phone,
-            }
+            initial=initial_data
         )
+
+    # ------------------------------------------
+    # POST
+    # ------------------------------------------
 
     else:
 
@@ -464,29 +648,62 @@ def checkout(request):
             request.POST
         )
 
+        # --------------------------------------
+        # اعتبارسنجی فرم
+        # --------------------------------------
+
         if form.is_valid():
 
-            with transaction.atomic():
+            # ----------------------------------
+            # بررسی موجودی قبل از ساخت سفارش
+            # ----------------------------------
+
+            for cart_item in cart_items:
+
+                product = cart_item.product
+
+                if not product.is_active:
+
+                    form.add_error(
+                        None,
+                        f'محصول «{product.title}» دیگر فعال نیست.',
+                    )
+
+                    break
+
+                if product.stock < cart_item.quantity:
+
+                    form.add_error(
+                        None,
+                        (
+                            f'موجودی محصول '
+                            f'«{product.title}» کافی نیست.'
+                        ),
+                    )
+
+                    break
+
+            # اگر مشکل موجودی داشتیم
+            if form.errors:
+                pass
+
+            else:
+
+                # ------------------------------
+                # محاسبه مبلغ سفارش
+                # ------------------------------
 
                 total_amount = 0
 
-                order_items = []
+                order_items_data = []
 
                 for cart_item in cart_items:
 
                     product = cart_item.product
 
-                    if not product.is_active:
-                        raise ValueError(
-                            f'محصول {product.title} فعال نیست.'
-                        )
-
-                    if product.stock < cart_item.quantity:
-                        raise ValueError(
-                            f'موجودی {product.title} کافی نیست.'
-                        )
-
-                    unit_price = product.final_price
+                    unit_price = (
+                        product.final_price
+                    )
 
                     item_total = (
                         unit_price
@@ -495,14 +712,18 @@ def checkout(request):
 
                     total_amount += item_total
 
-                    order_items.append({
+                    order_items_data.append({
                         'product': product,
-                        'title': product.title,
+                        'product_title': product.title,
                         'sku': product.sku,
                         'unit_price': unit_price,
                         'quantity': cart_item.quantity,
                         'total_price': item_total,
                     })
+
+                # ------------------------------
+                # محاسبه تخفیف
+                # ------------------------------
 
                 discount_amount = 0
 
@@ -519,96 +740,114 @@ def checkout(request):
                     - discount_amount
                 )
 
-                order = Order.objects.create(
-                    user=request.user,
+                # ------------------------------
+                # ساخت سفارش
+                # ------------------------------
 
-                    number=(
-                        f'ORD-{timezone.now():%Y%m%d}'
-                        f'-{uuid4().hex[:8].upper()}'
-                    ),
+                with transaction.atomic():
 
-                    status=Order.STATUS_PENDING,
+                    order = Order.objects.create(
 
-                    total_amount=total_amount,
+                        user=request.user,
 
-                    discount_amount=discount_amount,
+                        number=(
+                            f'ORD-{timezone.now():%Y%m%d}'
+                            f'-{uuid4().hex[:8].upper()}'
+                        ),
 
-                    final_amount=final_amount,
+                        status=Order.STATUS_PENDING,
 
-                    recipient_name=(
-                        form.cleaned_data[
-                            'customer_name'
-                        ]
-                    ),
+                        total_amount=total_amount,
 
-                    phone=(
-                        form.cleaned_data[
-                            'phone'
-                        ]
-                    ),
+                        discount_amount=discount_amount,
 
-                    province='',
+                        final_amount=final_amount,
 
-                    city=(
-                        form.cleaned_data[
-                            'city'
-                        ]
-                    ),
+                        recipient_name=(
+                            form.cleaned_data[
+                                'customer_name'
+                            ]
+                        ),
 
-                    address=(
-                        form.cleaned_data[
-                            'address'
-                        ]
-                    ),
+                        phone=(
+                            form.cleaned_data[
+                                'phone'
+                            ]
+                        ),
 
-                    postal_code=(
-                        form.cleaned_data[
-                            'postal_code'
-                        ]
-                    ),
+                        province=(
+                            default_address.province
+                            if default_address
+                            else ''
+                        ),
+
+                        city=(
+                            form.cleaned_data[
+                                'city'
+                            ]
+                        ),
+
+                        address=(
+                            form.cleaned_data[
+                                'address'
+                            ]
+                        ),
+
+                        postal_code=(
+                            form.cleaned_data[
+                                'postal_code'
+                            ]
+                        ),
+                    )
+
+                    # --------------------------
+                    # ساخت Order Items
+                    # --------------------------
+
+                    for item in order_items_data:
+
+                        OrderItem.objects.create(
+
+                            order=order,
+
+                            product=item['product'],
+
+                            product_title=(
+                                item['product_title']
+                            ),
+
+                            sku=item['sku'],
+
+                            unit_price=(
+                                item['unit_price']
+                            ),
+
+                            quantity=item['quantity'],
+
+                            total_price=(
+                                item['total_price']
+                            ),
+                        )
+
+                # ----------------------------------
+                # سفارش ساخته شد
+                # ----------------------------------
+                #
+                # هنوز:
+                # stock کم نمی‌کنیم
+                # cart خالی نمی‌کنیم
+                #
+                # چون پرداخت هنوز انجام نشده است.
+                # ----------------------------------
+
+                return redirect(
+                    'start_payment',
+                    order_number=order.number,
                 )
 
-                for item in order_items:
-
-                    OrderItem.objects.create(
-                        order=order,
-                        product=item['product'],
-                        product_title=item['title'],
-                        sku=item['sku'],
-                        unit_price=item['unit_price'],
-                        quantity=item['quantity'],
-                        total_price=item['total_price'],
-                    )
-
-                    item['product'].stock -= (
-                        item['quantity']
-                    )
-
-                    item['product'].save(
-                        update_fields=['stock']
-                    )
-
-                user_cart.items.all().delete()
-
-                request.session.pop(
-                    'coupon_code',
-                    None
-                )
-
-            return render(
-                request,
-                'sabadkharid.html',
-                {
-                    'order_success': True,
-                    'order': order,
-                    'cart_items': [],
-                    'cart_summary': {
-                        'items_total_display': '۰ تومان',
-                        'discount_display': '۰ تومان',
-                        'final_total_display': '۰ تومان',
-                    },
-                }
-            )
+    # ------------------------------------------
+    # آماده‌سازی اطلاعات سبد برای Template
+    # ------------------------------------------
 
     cart_items_data = []
 
@@ -618,28 +857,44 @@ def checkout(request):
 
         cart_items_data.append({
             'id': item.id,
+
             'title': product.title,
+
             'sku': product.sku,
+
             'image_url': (
                 product.main_image.url
                 if product.main_image
                 else ''
             ),
-            'warranty_text': product.warranty_text,
+
+            'warranty_text': (
+                product.warranty_text
+            ),
+
             'quantity': item.quantity,
+
             'unit_price': item.unit_price,
+
             'unit_price_display': format_price(
                 item.unit_price
             ),
+
             'discount_percent': (
                 product.discount_percent
             ),
+
             'total_display': format_price(
                 item.total_price
             ),
         })
 
+    # ------------------------------------------
+    # Context
+    # ------------------------------------------
+
     context = {
+
         'cart_items': cart_items_data,
 
         'cart_summary': get_cart_summary(
@@ -650,7 +905,9 @@ def checkout(request):
         'coupon': (
             {
                 'code': coupon.code,
-                'discount_percent': coupon.discount_percent,
+                'discount_percent': (
+                    coupon.discount_percent
+                ),
                 'message': (
                     f'کد {coupon.code} اعمال شده است.'
                 ),
@@ -687,3 +944,294 @@ def order_detail(request, order_number):
             'order_detail': order,
         },
     )
+
+
+@login_required
+def payment_success(request, order_number):
+
+    order = get_object_or_404(
+        Order,
+        number=order_number,
+        user=request.user,
+    )
+
+    if order.status != Order.STATUS_PAID:
+        return redirect(
+            'order_detail',
+            order_number=order.number,
+        )
+
+    return render(
+        request,
+        'payment_success.html',
+        {
+            'order': order,
+            'final_amount_display': format_price(
+                order.final_amount
+            ),
+        },
+    )
+
+@login_required
+def payment_success(request, order_number):
+
+    order = get_object_or_404(
+        Order,
+        number=order_number,
+        user=request.user,
+    )
+
+    if order.status != Order.STATUS_PAID:
+        return redirect(
+            'order_detail',
+            order_number=order.number,
+        )
+
+    return render(
+        request,
+        'payment_success.html',
+        {
+            'order': order,
+            'final_amount_display': format_price(
+                order.final_amount
+            ),
+        },
+    )
+
+
+@login_required
+def start_payment(
+    request,
+    order_number,
+):
+    order = get_object_or_404(
+        Order,
+        number=order_number,
+        user=request.user,
+    )
+
+    if order.status != Order.STATUS_PENDING:
+        return redirect(
+            'order_detail',
+            order_number=order.number,
+        )
+
+    payment_url = zarinpal_request_payment(
+        order,
+        request,
+    )
+
+    if not payment_url:
+        return render(
+            request,
+            'sabadkharid.html',
+            {
+                'payment_error': (
+                    'خطا در اتصال به درگاه آزمایشی زرین‌پال.'
+                ),
+            },
+        )
+
+    return redirect(payment_url)
+
+
+def zarinpal_verify(request):
+
+    authority = request.GET.get(
+        'Authority'
+    )
+
+    status = request.GET.get(
+        'Status'
+    )
+
+    if not authority:
+        return render(
+            request,
+            'sabadkharid.html',
+            {
+                'payment_error': (
+                    'اطلاعات بازگشت از درگاه ناقص است.'
+                ),
+            },
+        )
+
+    order = Order.objects.filter(
+        payment_authority=authority
+    ).first()
+
+    if not order:
+        return render(
+            request,
+            'sabadkharid.html',
+            {
+                'payment_error': (
+                    'سفارش مربوط به این پرداخت پیدا نشد.'
+                ),
+            },
+        )
+
+    if status != 'OK':
+        order.status = Order.STATUS_CANCELLED
+
+        order.save(
+            update_fields=[
+                'status',
+                'updated_at',
+            ]
+        )
+
+        return render(
+            request,
+            'payment_cancelled.html',
+            {
+                'order': order,
+            },
+        )
+
+    amount = order.final_amount * 10
+
+    data = {
+        'merchant_id': settings.ZARINPAL_MERCHANT_ID,
+        'amount': amount,
+        'authority': authority,
+    }
+
+    response = requests.post(
+        settings.ZARINPAL_SANDBOX_VERIFY_URL,
+        json=data,
+        headers={
+            'User-Agent': 'ZarinPal Rest API v1',
+        },
+        timeout=15,
+    )
+
+    print('\n' + '=' * 60)
+    print('ZARINPAL VERIFY STATUS:', response.status_code)
+    print('ZARINPAL VERIFY CONTENT-TYPE:', response.headers.get('Content-Type'))
+    print('ZARINPAL VERIFY RESPONSE:')
+    print(response.text)
+    print('=' * 60 + '\n')
+
+    try:
+        result = response.json()
+
+    except ValueError:
+        return render(
+            request,
+            'sabadkharid.html',
+            {
+                'payment_failed': True,
+                'order': order,
+                'payment_error': (
+                    'پاسخ معتبری از سرویس تأیید پرداخت دریافت نشد.'
+                ),
+            },
+        )
+
+    payment_code = (
+        result.get('data', {})
+        .get('code')
+    )
+
+    if payment_code not in [100, 101]:
+        return render(
+            request,
+            'sabadkharid.html',
+            {
+                'payment_failed': True,
+                'order': order,
+            },
+        )
+
+    ref_id = (
+        result.get('data', {})
+        .get('ref_id')
+    )
+
+    with transaction.atomic():
+
+        order = (
+            Order.objects
+            .select_for_update()
+            .get(
+                id=order.id
+            )
+        )
+
+        if order.status != Order.STATUS_PAID:
+
+            for item in order.items.select_related(
+                'product'
+            ):
+
+                product = item.product
+
+                if not product:
+                    continue
+
+                if product.stock < item.quantity:
+                    order.status = (
+                        Order.STATUS_CANCELLED
+                    )
+                    order.save(
+                        update_fields=[
+                            'status',
+                            'updated_at',
+                        ]
+                    )
+
+                    return render(
+                        request,
+                        'sabadkharid.html',
+                        {
+                            'payment_failed': True,
+                            'order': order,
+                            'payment_error': (
+                                'موجودی محصول برای تکمیل سفارش کافی نیست.'
+                            ),
+                        },
+                    )
+
+                product.stock -= item.quantity
+
+                product.save(
+                    update_fields=[
+                        'stock'
+                    ]
+                )
+
+            order.status = Order.STATUS_PAID
+
+            order.payment_ref_id = (
+                str(ref_id)
+                if ref_id
+                else ''
+            )
+
+            order.paid_at = timezone.now()
+
+            order.save(
+                update_fields=[
+                    'status',
+                    'payment_ref_id',
+                    'paid_at',
+                    'updated_at',
+                ]
+            )
+
+            user_cart = get_user_cart(
+                order.user
+            )
+
+            user_cart.items.all().delete()
+
+            return redirect(
+                'payment_success',
+                order_number=order.number,
+            )
+
+        return redirect(
+            'payment_success',
+            order_number=order.number,
+        )

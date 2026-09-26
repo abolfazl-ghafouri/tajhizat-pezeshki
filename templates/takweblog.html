@@ -100,32 +100,19 @@
                 <div class="card">
                     <h3>دسته‌بندی‌ها</h3>
                     <ul class="categories">
-                        {% for category in categories %}
-    <li>
-        <a
-            href="{% url 'blog' %}?category={{ category.slug }}"
-            class="category-link"
-        >
-            <span class="cat-name">
-                <span class="cat-icon {{ category.icon_class }}">
-                    <i class="{{ category.icon }}"></i>
-                </span>
-
-                {{ category.name }}
-            </span>
-
-            <span class="count">
-                {{ category.count }}
-            </span>
-        </a>
-    </li>
-{% empty %}
-    <li>
-        <span class="cat-name">
-            دسته‌بندی‌ای وجود ندارد
-        </span>
-    </li>
-{% endfor %}
+                        {% if article.category_name %}
+                            <li>
+                                <a href="{% url 'blog' %}?category={{ article.category_name }}">
+                                    <span class="cat-name">
+                                        <span class="cat-icon equipment">
+                                            <i class="fa-solid fa-tooth"></i>
+                                        </span>
+                                        {{ article.category_name }}
+                                    </span>
+                                    <span class="count">1</span>
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
 

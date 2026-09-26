@@ -181,6 +181,24 @@ class Order(models.Model):
         verbose_name='مبلغ نهایی',
     )
 
+    payment_authority = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='Authority زرین پال',
+    )
+
+    payment_ref_id = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='شماره پیگیری پرداخت',
+    )
+
+    paid_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='تاریخ پرداخت',
+    )
+
     recipient_name = models.CharField(
         max_length=150,
         verbose_name='نام گیرنده',

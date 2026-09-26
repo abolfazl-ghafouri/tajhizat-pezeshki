@@ -156,11 +156,11 @@
             </h2>
 <form action="{% url 'checkout' %}" data-checkout-form="true" id="customerForm" method="post">
 {% csrf_token %}
-<div class="form-group"><label>نام و نام خانوادگی</label><input name="customer_name" placeholder="مثال: علی محمدی" required="" type="text"/></div>
-<div class="form-group"><label>شماره تماس</label><input name="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required="" type="tel"/></div>
-<div class="form-group"><label>استان و شهر</label><input name="city" placeholder="تهران" required="" type="text"/></div>
-<div class="form-group"><label>آدرس پستی</label><input name="address" placeholder="خیابان ..." required="" type="text"/></div>
-<div class="form-group"><label>کد پستی</label><input name="postal_code" placeholder="۱۰ رقمی" type="text"/></div>
+<div class="form-group"><label>نام و نام خانوادگی</label><input name="customer_name" placeholder="مثال: علی محمدی" required="" type="text" value="{{ checkout_form.customer_name.value|default:'' }}"/></div>
+<div class="form-group"><label>شماره تماس</label><input name="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" required="" type="tel" value="{{ checkout_form.phone.value|default:'' }}"/></div>
+<div class="form-group"><label>استان و شهر</label><input name="city" placeholder="تهران" required="" type="text" value="{{ checkout_form.city.value|default:'' }}"/></div>
+<div class="form-group"><label>آدرس پستی</label><input name="address" placeholder="خیابان ..." required="" type="text" value="{{ checkout_form.address.value|default:'' }}"/></div>
+<div class="form-group"><label>کد پستی</label><input name="postal_code" placeholder="۱۰ رقمی" type="text" value="{{ checkout_form.postal_code.value|default:'' }}"/></div>
 <div class="modal-actions">
 <button class="btn-secondary" id="cancelCheckoutBtn" type="button">انصراف</button>
 <button class="btn-primary" type="submit">پرداخت و ثبت نهایی</button>

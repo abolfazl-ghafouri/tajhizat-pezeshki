@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa-IR">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        پرداخت لغو شد | AZARYAZDAN
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/payment-result.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <header class="result-header">
+
+        <div class="result-container">
+
+            <a
+                href="{% url 'home' %}"
+                class="result-logo"
+            >
+                AZARYAZDAN
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="result-page">
+
+        <section class="result-card">
+
+            <div class="result-icon result-icon-cancel">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        fill="#fef2f2"
+                        stroke="#ef4444"
+                        stroke-width="2"
+                    />
+
+                    <path
+                        d="M8 8L16 16"
+                        stroke="#ef4444"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                    />
+
+                    <path
+                        d="M16 8L8 16"
+                        stroke="#ef4444"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <h1>
+                پرداخت شما لغو شد
+            </h1>
+
+
+            <p class="result-message">
+
+                پرداخت سفارش شما تکمیل نشد.
+                سفارش موردنظر لغو شده است و مبلغی از حساب شما کسر نشده است.
+
+            </p>
+
+
+            <div class="order-info">
+
+                <div class="info-row">
+
+                    <span>
+                        شماره سفارش
+                    </span>
+
+                    <strong>
+                        {{ order.number }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span>
+                        وضعیت سفارش
+                    </span>
+
+                    <strong class="status-cancelled">
+                        لغو شده
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-note">
+
+                کالاهای شما همچنان در سبد خرید باقی مانده‌اند.
+                می‌توانید دوباره به سبد خرید برگردید و سفارش جدیدی ثبت کنید.
+
+            </div>
+
+
+            <div class="result-actions">
+
+                <a
+                    href="{% url 'cart' %}"
+                    class="btn btn-primary"
+                >
+                    بازگشت به سبد خرید
+                </a>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-secondary"
+                >
+                    بازگشت به فروشگاه
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

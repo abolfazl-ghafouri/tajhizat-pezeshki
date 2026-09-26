@@ -1,0 +1,185 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa-IR">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        پرداخت موفق | AZARYAZDAN
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/payment-success.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <header class="success-header">
+
+        <div class="success-container">
+
+            <a
+                href="{% url 'home' %}"
+                class="success-logo"
+            >
+                AZARYAZDAN
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <main class="success-page">
+
+        <section class="success-card">
+
+            <div class="success-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        fill="#ecfdf5"
+                        stroke="#10b981"
+                        stroke-width="2"
+                    />
+
+                    <path
+                        d="M7 12.5L10.2 15.5L17 8.5"
+                        stroke="#10b981"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <h1>
+                پرداخت شما با موفقیت انجام شد
+            </h1>
+
+
+            <p class="success-message">
+
+                از خرید شما سپاسگزاریم.
+                پرداخت سفارش شما با موفقیت تأیید شد
+                و سفارش شما در حال بررسی و آماده‌سازی است.
+
+            </p>
+
+
+            <div class="order-info">
+
+                <div class="info-row">
+
+                    <span>
+                        شماره سفارش
+                    </span>
+
+                    <strong>
+                        {{ order.number }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span>
+                        مبلغ پرداختی
+                    </span>
+
+                    <strong>
+                        {{ final_amount_display }}
+                    </strong>
+
+                </div>
+
+
+                {% if order.payment_ref_id %}
+
+                <div class="info-row">
+
+                    <span>
+                        کد پیگیری پرداخت
+                    </span>
+
+                    <strong>
+                        {{ order.payment_ref_id }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="info-row">
+
+                    <span>
+                        وضعیت سفارش
+                    </span>
+
+                    <strong class="status">
+                        پرداخت شده
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="success-note">
+
+                سفارش شما ثبت شده و در حال بررسی است.
+                پس از بررسی و آماده‌سازی، مراحل بعدی سفارش انجام خواهد شد.
+
+            </div>
+
+
+            <div class="success-actions">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="btn btn-primary"
+                >
+                    مشاهده سفارش
+                </a>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="btn btn-secondary"
+                >
+                    بازگشت به فروشگاه
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

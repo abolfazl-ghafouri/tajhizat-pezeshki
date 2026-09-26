@@ -51,4 +51,22 @@ urlpatterns = [
         views.order_detail,
         name='order_detail',
     ),
+
+    path(
+        'payment/start/<str:order_number>/',
+        views.start_payment,
+        name='start_payment',
+    ),
+
+    path(
+        'payment/zarinpal/verify/',
+        views.zarinpal_verify,
+        name='zarinpal_verify',
+    ),
+
+    path(
+        'payment/success/<str:order_number>/',
+        views.payment_success,
+        name='payment_success',
+    ),
 ]
