@@ -1,16 +1,22 @@
-<!DOCTYPE html>
-
-<html dir="rtl" lang="fa">
-<head>
+{% extends "base.html" %}
 {% load static %}
+
+{% block html_attributes %} dir="rtl" lang="fa" {% endblock %}
+{% block head %}
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>داشبورد مشتری - تجهیزات پزشکی</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="{% static 'css/dashbordd.css' %}" rel="stylesheet"/>
-</head>
-<body>
+{% endblock %}
+{% block body_attributes %}{% endblock %}
+{% block pre_topbar %}{% endblock %}
+{% block topbar %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+
 <!-- Mobile Header -->
 <div class="mobile-header" id="mobileHeader">
 <button aria-label="باز کردن منو" class="hamburger-btn" id="hamburgerBtn">
@@ -307,7 +313,9 @@
 </div>
 </section>
 </main>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}
 <script src="{% static 'js/dashbordd.js' %}"></script>
 <script src="{% static 'js/persian-numbers.js' %}"></script>
-</body>
-</html>
+{% endblock %}

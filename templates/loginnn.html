@@ -1,15 +1,21 @@
-<!DOCTYPE html>
-
-<html dir="rtl" lang="fa">
-<head>
+{% extends "base.html" %}
 {% load static %}
+
+{% block html_attributes %} dir="rtl" lang="fa" {% endblock %}
+{% block head %}
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>احراز هویت - تجهیزات پزشکی پیشرفته</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{% static 'css/loginnn.css' %}">
-</head>
-<body data-verify-url="{% url 'verify_otp' %}">
+{% endblock %}
+{% block body_attributes %} data-verify-url="{% url 'verify_otp' %}"{% endblock %}
+{% block pre_topbar %}{% endblock %}
+{% block topbar %}{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+
 <!-- Main Mockup Container -->
 <div class="mockup-container">
 <!-- ========== LEFT PANEL ========== -->
@@ -209,6 +215,8 @@
 </div>
 </div>
 </div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}
 <script src="{% static 'js/loginnn.js' %}"></script>
-</body>
-</html>
+{% endblock %}

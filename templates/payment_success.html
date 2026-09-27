@@ -1,10 +1,9 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
+{% block html_attributes %} dir="rtl" lang="fa-IR" {% endblock %}
+{% block head %}
 
-<html dir="rtl" lang="fa-IR">
-
-<head>
 
     <meta charset="utf-8">
 
@@ -21,25 +20,15 @@
         rel="stylesheet"
         href="{% static 'css/payment-success.css' %}"
     >
+{% endblock %}
+{% block body_attributes %}{% endblock %}
+{% block pre_topbar %}{% endblock %}
+{% block topbar %}{% endblock %}
+{% block header %}{% include "includes/header_payment_success.html" %}{% endblock %}
+{% block content %}
 
-</head>
 
-<body>
-
-    <header class="success-header">
-
-        <div class="success-container">
-
-            <a
-                href="{% url 'home' %}"
-                class="success-logo"
-            >
-                AZARYAZDAN
-            </a>
-
-        </div>
-
-    </header>
+    
 
 
     <main class="success-page">
@@ -179,7 +168,6 @@
         </section>
 
     </main>
-
-</body>
-
-</html>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}{% endblock %}

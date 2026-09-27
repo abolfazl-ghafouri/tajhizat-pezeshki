@@ -1,0 +1,26 @@
+<header class="header">
+<div class="container">
+<div aria-label="منو" class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</div>
+<div class="logo">{{ site_settings.brand_name|default:"AZARYAZDAN" }}</div>
+<nav id="navMenu">
+<ul>
+<li><a href="{% url 'home' %}">خانه</a></li>
+<li><a href="{% url 'shop' %}">محصولات</a></li>
+<li><a href="{% url 'shop' %}">تجهیزات پزشکی</a></li>
+<li><a href="{% url 'shop' %}">دندانپزشکی</a></li>
+<li><a href="{% url 'shop' %}">برندها</a></li>
+<li><a href="{% url 'blog' %}">وبلاگ</a></li>
+<li><a href="mailto:{{ site_settings.email|default:'info@azaryazdan.ir' }}">تماس</a></li>
+</ul>
+</nav>
+<div class="header-icons">
+<i class="fa-solid fa-magnifying-glass" data-navigation-url="{% url 'shop' %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-heart" data-navigation-url="{% if request.user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" role="link" tabindex="0"></i>
+<i class="fa-solid fa-cart-shopping" data-navigation-url="{% url 'cart' %}" role="link" tabindex="0"></i>
+</div>
+</div>
+</header>

@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html{% block html_attributes %} dir="rtl" lang="fa"{% endblock %}>
+<head>
+{% block head %}{% endblock %}
+</head>
+<body{% block body_attributes %}{% endblock %}>
+{% block pre_topbar %}{% endblock %}
+{% block topbar %}{% include "includes/topbar.html" %}{% endblock %}
+{% block header %}{% include "includes/header.html" %}{% endblock %}
+{% block content %}{% endblock %}
+{% block footer %}{% include "includes/footer.html" %}{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>
