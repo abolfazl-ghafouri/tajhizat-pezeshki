@@ -59,6 +59,26 @@ document.addEventListener('DOMContentLoaded', function () {
         return Number(num || 0).toLocaleString('fa-IR');
     }
 
+    function parseNumber(value) {
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+
+    const normalized = String(value ?? '')
+        .replace(/[۰-۹]/g, digit => {
+            return persianDigits.indexOf(digit);
+        })
+        .replace(/[٠-٩]/g, digit => {
+            return arabicDigits.indexOf(digit);
+        })
+        .replace(/٬/g, '')
+        .replace(/,/g, '')
+        .trim();
+
+    const number = Number(normalized);
+
+    return Number.isFinite(number) ? number : 0;
+}
+
     function updateSummary(summary) {
         if (!summary) return;
 
@@ -93,41 +113,53 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateCartCount() {
-        const items = document.querySelectorAll('.cart-item');
-        const count = Array.from(items).reduce((total, item) => {
-            const quantity = Number(item.querySelector('.qty-display')?.textContent) || 0;
+    const items = document.querySelectorAll('.cart-item');
+
+    const count = Array.from(items).reduce(
+        (total, item) => {
+            const quantity = parseNumber(
+                item.querySelector('.qty-display')?.textContent
+            );
+
             return total + quantity;
-        }, 0);
+        },
+        0
+    );
 
-        const label = document.querySelector(
-            '.cart-item-count'
-        );
+    const label = document.querySelector(
+        '.cart-item-count'
+    );
 
-        if (label) {
-            label.textContent = `${formatNumber(count)} کالا در سبد`;
-        }
-
-        const grid = document.getElementById('cartGrid');
-        const empty = document.getElementById('emptyCart');
-        const title = document.querySelector('.page-title-section');
-
-        if (count === 0) {
-            if (grid) grid.style.display = 'none';
-            if (empty) empty.style.display = 'block';
-            if (title) title.style.display = 'none';
-        } else {
-            if (grid) grid.style.display = '';
-            if (empty) empty.style.display = 'none';
-            if (title) title.style.display = '';
-        }
+    if (label) {
+        label.textContent =
+            `${formatNumber(count)} کالا در سبد`;
     }
+
+    const grid = document.getElementById('cartGrid');
+    const empty = document.getElementById('emptyCart');
+    const title = document.querySelector(
+        '.page-title-section'
+    );
+
+    if (count === 0) {
+        if (grid) grid.style.display = 'none';
+        if (empty) empty.style.display = 'block';
+        if (title) title.style.display = 'none';
+    } else {
+        if (grid) grid.style.display = '';
+        if (empty) empty.style.display = 'none';
+        if (title) title.style.display = '';
+    }
+}
 
     async function updateItem(button, change) {
         const item = button.closest('.cart-item');
         if (!item) return;
 
         const qtyElement = item.querySelector('.qty-display');
-        const current = Number(qtyElement?.textContent) || 1;
+        const current = parseNumber(
+            qtyElement?.textContent
+        ) || 1;
         const quantity = Math.max(1, current + change);
         const url = item.dataset.updateUrl;
 
@@ -160,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (itemTotal) {
                 itemTotal.textContent = (
                     data.item_total_display || ''
-                ).replace(' تومان', '');
+                );
             }
 
             updateSummary(data.summary);

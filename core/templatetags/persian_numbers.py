@@ -24,13 +24,12 @@ def fa_price(value):
 
     formatted = f'{value:,}'.replace(',', '٬')
 
+    translation = str.maketrans(
+        '0123456789',
+        '۰۱۲۳۴۵۶۷۸۹'
+    )
+
     return (
-        str(formatted)
-        .translate(
-            str.maketrans(
-                '0123456789',
-                '۰۱۲۳۴۵۶۷۸۹'
-            )
-        )
+        formatted.translate(translation)
         + ' تومان'
     )
