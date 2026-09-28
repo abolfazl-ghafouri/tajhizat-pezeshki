@@ -592,7 +592,7 @@ def checkout(request):
         .all()
     )
 
-    # اگر سبد خالی است
+
     if not cart_items.exists():
         return redirect('cart')
 
